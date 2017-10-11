@@ -1,0 +1,34 @@
+{
+  "name": "@dataplug/dataplug",
+  "version": "0.1.0",
+  "description": "Dataplug library (by Dataplug.io)",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": "8.x"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dataplug-io/dataplug.git"
+  },
+  "author": "",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/dataplug-io/dataplug/issues"
+  },
+  "homepage": "https://github.com/dataplug-io/dataplug#readme",
+  "dependencies": {
+    "ajv": "^5.2.3",
+    "bluebird": "^3.5.1",
+    "chalk": "^2.1.0",
+    "lodash": "^4.17.4",
+    "oboe": "^2.1.4",
+    "yargs": "^9.0.1"
+  },
+  "devDependencies": {
+    "mocha": "^4.0.1",
+    "standard": "^10.0.3"
+  }
+}
