@@ -1,14 +1,3 @@
-const chai = require('chai');
-const Source = require('../lib');
+const chai = require('chai')
 
-chai.should();
-
-describe('dataplug', () => {
-  describe('#()', () => {
-    it('', () => {});
-  });
-
-  describe('#createOutput()', () => {
-    it('', () => {});
-  });
-});
+chai.should()

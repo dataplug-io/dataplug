@@ -5,9 +5,10 @@
   "main": "lib/index.js",
   "scripts": {
     "jsdoc": "jsdoc --destination ./docs --recurse ./lib --verbose",
+    "lint": "standard",
     "test": "mocha",
     "coverage": "nyc --reporter=html --reporter=text mocha",
-    "preversion": "npm test",
+    "preversion": "npm run test",
     "postversion": "git push && git push --tags"
   },
   "engines": {
@@ -24,7 +25,7 @@
   },
   "homepage": "https://github.com/dataplug-io/dataplug#readme",
   "dependencies": {
-    "ajv": "^5.2.3",
+    "ajv": "^5.2.4",
     "bluebird": "^3.5.1",
     "chalk": "^2.2.0",
     "lodash": "^4.17.4",
@@ -34,7 +35,7 @@
     "chai": "^4.1.2",
     "jsdoc": "^3.5.5",
     "mocha": "^4.0.1",
-    "nyc": "^11.2.1",
+    "nyc": "^11.3.0",
     "standard": "^10.0.3"
   }
 }
