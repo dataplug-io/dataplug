@@ -8,7 +8,7 @@
     "lint": "standard",
     "test": "mocha",
     "coverage": "nyc --reporter=html --reporter=text mocha",
-    "preversion": "npm run test",
+    "preversion": "npm run lint && npm run test",
     "postversion": "git push && git push --tags"
   },
   "engines": {
