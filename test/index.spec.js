@@ -4,7 +4,7 @@ require('chai')
 const dataplug = require('../lib')
 
 describe('dataplug', () => {
-  it('should have a "config" field', () => {
+  it('should have "config" field', () => {
     dataplug
       .should.have.property('config')
       .that.is.an('object')
