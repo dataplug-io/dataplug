@@ -4,75 +4,81 @@ require('chai')
 const dataplug = require('../lib')
 
 describe('dataplug', () => {
-  it('should have "config" field', () => {
+  it('has "config" field', () => {
     dataplug
       .should.have.property('config')
       .that.is.an('object')
   })
 
-  it('should have "ConfigDeclaration" class', () => {
+  it('has "ConfigDeclaration" class', () => {
     dataplug
       .should.have.property('ConfigDeclaration')
       .that.is.an('function')
   })
 
-  it('should have "ConfigMapping" class', () => {
+  it('has "ConfigMapping" class', () => {
     dataplug
       .should.have.property('ConfigMapping')
       .that.is.an('function')
   })
 
-  it('should have "Filter" class', () => {
+  it('has "Filter" class', () => {
     dataplug
       .should.have.property('Filter')
       .that.is.an('function')
   })
 
-  it('should have "Flatter" class', () => {
+  it('has "Flatter" class', () => {
     dataplug
       .should.have.property('Flatter')
       .that.is.an('function')
   })
 
-  it('should have "Scanner" class', () => {
+  it('has "ReadableSequence" class', () => {
+    dataplug
+      .should.have.property('ReadableSequence')
+      .that.is.an('function')
+  })
+
+  it('has "Scanner" class', () => {
     dataplug
       .should.have.property('Scanner')
       .that.is.an('function')
   })
 
-  it('should have "source" function', () => {
+  it('has "source" function', () => {
     dataplug
       .should.have.property('source')
       .that.is.an('function')
   })
 
-  it('should have "Source" class', () => {
+  it('has "Source" class', () => {
     dataplug
       .should.have.property('Source')
       .that.is.an('function')
   })
 
-  it('should have "target" function', () => {
+  it('has "target" function', () => {
     dataplug
       .should.have.property('target')
       .that.is.an('function')
   })
 
-  it('should have "Target" class', () => {
+  it('has "Target" class', () => {
     dataplug
       .should.have.property('Target')
       .that.is.an('function')
   })
 
   describe('#source()', () => {
-    it('should create an instance of Source', () => {
+    it('creates an instance of Source', () => {
       dataplug.source(null, null)
         .should.be.an.instanceof(dataplug.Source)
     })
   })
 
   describe('#target()', () => {
-    it('should create an instance of Target', () => {
+    it('creates an instance of Target', () => {
       dataplug.target(null, null)
         .should.be.an.instanceof(dataplug.Target)
     })
