@@ -10,6 +10,18 @@ describe('dataplug', () => {
       .that.is.an('object')
   })
 
+  it('should have "ConfigDeclaration" class', () => {
+    dataplug
+      .should.have.property('ConfigDeclaration')
+      .that.is.an('function')
+  })
+
+  it('should have "ConfigMapping" class', () => {
+    dataplug
+      .should.have.property('ConfigMapping')
+      .that.is.an('function')
+  })
+
   it('should have "Filter" class', () => {
     dataplug
       .should.have.property('Filter')
