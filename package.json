@@ -6,8 +6,8 @@
   "scripts": {
     "jsdoc": "jsdoc --destination ./docs --recurse ./lib --verbose",
     "lint": "standard",
-    "test": "mocha",
-    "coverage": "nyc --reporter=html --reporter=text mocha",
+    "test": "nyc --reporter=none mocha",
+    "coverage": "nyc report --reporter=html --reporter=text",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "preversion": "npm run lint && npm run test",
     "postversion": "git push && git push --tags"
