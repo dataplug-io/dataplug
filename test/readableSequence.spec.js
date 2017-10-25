@@ -53,4 +53,46 @@ describe('ReadableSequence', () => {
     stream2.write('2')
     stream2.end()
   })
+
+  it('supports async functor', (done) => {
+    const stream1 = new PassThrough()
+    const stream2 = new PassThrough()
+    const sequence = new ReadableSequence(async (oldStream, oldContext) => {
+      if (oldStream === null) {
+        return stream1
+      }
+      if (oldStream === stream1) {
+        return stream2
+      }
+      return null
+    })
+
+    let data = ''
+    new Promise((resolve, reject) => sequence
+        .on('end', () => resolve(data))
+        .on('error', reject)
+        .on('data', (chunk) => { data += chunk }))
+      .should.eventually.be.equal('12')
+      .notify(done)
+
+    stream1.write('1')
+    stream1.end()
+
+    stream2.write('2')
+    stream2.end()
+  })
+
+  it('handles errors', (done) => {
+    const sequence = new ReadableSequence(async (oldStream, oldContext) => {
+      throw new Error('expected')
+    })
+
+    let data = ''
+    new Promise((resolve, reject) => sequence
+        .on('end', () => resolve(data))
+        .on('error', reject)
+        .on('data', (chunk) => { data += chunk }))
+      .should.eventually.be.rejectedWith(/expected/)
+      .notify(done)
+  })
 })
