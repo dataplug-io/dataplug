@@ -34,6 +34,12 @@ describe('dataplug', () => {
       .that.is.an('function')
   })
 
+  it('has "MappedStream" class', () => {
+    dataplug
+      .should.have.property('MappedStream')
+      .that.is.an('function')
+  })
+
   it('has "ReadableSequence" class', () => {
     dataplug
       .should.have.property('ReadableSequence')
