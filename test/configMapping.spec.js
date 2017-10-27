@@ -15,7 +15,7 @@ describe('ConfigMapping', () => {
       const other = new ConfigMapping()
         .remap('property', mapper)
       new ConfigMapping(other)
-        .should.have.property('property').that.equal(mapper)
+        .should.have.property('property')
     })
   })
 
@@ -31,12 +31,15 @@ describe('ConfigMapping', () => {
   describe('#asIs()', () => {
   })
 
+  describe('#default()', () => {
+    it('sets default value', () => {
+      new ConfigMapping()
+        .default('otherProperty', () => 'otherValue')
+        .apply({property: 'value'})
+        .should.deep.equal({otherProperty: 'otherValue'})
+    })
+  })
+
   describe('#apply()', () => {
-  })
-
-  describe('#remap()', () => {
-  })
-
-  describe('#remap()', () => {
   })
 })
