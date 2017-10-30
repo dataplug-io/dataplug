@@ -22,6 +22,12 @@ describe('dataplug', () => {
       .that.is.an('function')
   })
 
+  it('has "DataFlatter" class', () => {
+    dataplug
+      .should.have.property('DataFlatter')
+      .that.is.an('function')
+  })
+
   it('has "Filter" class', () => {
     dataplug
       .should.have.property('Filter')
@@ -31,6 +37,18 @@ describe('dataplug', () => {
   it('has "Flatter" class', () => {
     dataplug
       .should.have.property('Flatter')
+      .that.is.an('function')
+  })
+
+  it('has "FlatterNaming" class', () => {
+    dataplug
+      .should.have.property('FlatterNaming')
+      .that.is.an('function')
+  })
+
+  it('has "JsonUtils" class', () => {
+    dataplug
+      .should.have.property('JsonUtils')
       .that.is.an('function')
   })
 
@@ -49,6 +67,12 @@ describe('dataplug', () => {
   it('has "Scanner" class', () => {
     dataplug
       .should.have.property('Scanner')
+      .that.is.an('function')
+  })
+
+  it('has "SchemaFlatter" class', () => {
+    dataplug
+      .should.have.property('SchemaFlatter')
       .that.is.an('function')
   })
 

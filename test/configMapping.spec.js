@@ -23,12 +23,50 @@ describe('ConfigMapping', () => {
   })
 
   describe('#remap()', () => {
+    it('renames key and alters value', () => {
+      new ConfigMapping()
+        .remap('property', () => {
+          return {otherProperty: 'otherValue'}
+        })
+        .apply({property: 'value'})
+        .should.deep.equal({otherProperty: 'otherValue'})
+    })
+
+    it('matches multiple keys and keeps value', () => {
+      new ConfigMapping()
+        .remap(/key(A|B)/, (value, key) => {
+          let result = {}
+          result[`${key}_altered`] = value
+          return result
+        })
+        .apply({
+          keyA: 'valueA',
+          keyB: 'valueB',
+          keyC: 'valueC'
+        })
+        .should.deep.equal({
+          keyA_altered: 'valueA',
+          keyB_altered: 'valueB'
+        })
+    })
   })
 
   describe('#rename()', () => {
+    it('renames key and copies value as-is', () => {
+      new ConfigMapping()
+        .rename('property', 'otherProperty')
+        .apply({property: 'value'})
+        .should.deep.equal({otherProperty: 'value'})
+    })
   })
 
   describe('#asIs()', () => {
+    it('copies key and value as-is', () => {
+      new ConfigMapping()
+        .asIs('property')
+        .apply({property: 'value'})
+        .should.deep.equal({property: 'value'})
+    })
   })
 
   describe('#default()', () => {
