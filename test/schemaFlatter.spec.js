@@ -186,48 +186,45 @@ describe('SchemaFlatter', () => {
       }
       new SchemaFlatter().flatten(jsonSchema, 'collection')
         .should.be.deep.equal({
-          'collection': {
-            'fields': {
-              'id': {
-                'identity': true,
-                'type': 'integer'
+          collection: {
+            fields: {
+              id: {
+                identity: true,
+                type: 'integer'
               }
             },
-            'origin': '#',
-            'relatedEntities': [
+            origin: '#',
+            relatedEntities: [
               'collection/array[@]'
             ]
           },
           'collection/array[@]': {
-            'fields': {
-              '$foreign$id$collection': {
-                'identity': true,
-                'reference': {
-                  'depth': 1,
-                  'entity': 'collection',
-                  'field': 'id'
+            fields: {
+              $foreign$id$collection: {
+                identity: true,
+                reference: {
+                  depth: 1,
+                  entity: 'collection',
+                  field: 'id'
                 },
-                'type': 'integer'
+                type: 'integer'
               },
-              '$value': {
-                'identity': true,
-                'type': 'integer'
+              $value: {
+                identity: true,
+                type: 'integer'
               }
             },
-            'foreignFields': [
-              '$foreign$id$collection'
-            ],
-            'origin': '#/properties/array/items',
-            'customSchema': {
-              'properties': {
-                '$value': {
-                  'type': 'integer'
+            origin: '#/properties/array/items',
+            customSchema: {
+              properties: {
+                $value: {
+                  type: 'integer'
                 }
               },
-              'required': [
+              required: [
                 '$value'
               ],
-              'type': 'object'
+              type: 'object'
             }
           }
         })
@@ -284,9 +281,6 @@ describe('SchemaFlatter', () => {
                 'type': 'integer'
               }
             },
-            'foreignFields': [
-              '$foreign$id$collection'
-            ],
             'origin': '#/definitions/item',
             'customSchema': {
               'properties': {
@@ -353,9 +347,6 @@ describe('SchemaFlatter', () => {
                 'type': 'string'
               }
             },
-            'foreignFields': [
-              '$foreign$id$collection'
-            ],
             'origin': '#/properties/array/items'
           }
         })
@@ -416,9 +407,6 @@ describe('SchemaFlatter', () => {
                 'type': 'string'
               }
             },
-            'foreignFields': [
-              '$foreign$id$collection'
-            ],
             'origin': '#/definitions/item'
           }
         })
@@ -514,10 +502,438 @@ describe('SchemaFlatter', () => {
                 type: 'integer'
               }
             },
-            origin: '#/properties/complexObject',
-            foreignFields: [
-              '$foreign$simpleProperty$collection'
+            origin: '#/properties/complexObject'
+          }
+        })
+    })
+
+    it('flattens complex schema with default additionalProperties', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          simpleProperty: {
+            type: 'integer'
+          },
+          complexObject: {
+            type: 'object',
+            additionalProperties: true
+          }
+        },
+        required: ['simpleProperty']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          collection: {
+            fields: {
+              simpleProperty: {
+                identity: true,
+                type: 'integer'
+              }
+            },
+            origin: '#',
+            relatedEntities: [
+              'collection/complexObject'
             ]
+          },
+          'collection/complexObject': {
+            fields: {
+              $foreign$simpleProperty$collection: {
+                identity: true,
+                reference: {
+                  depth: 1,
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
+                type: 'integer'
+              }
+            },
+            origin: '#/properties/complexObject',
+            relatedEntities: [
+              'collection/complexObject.@0'
+            ]
+          },
+          'collection/complexObject.@0': {
+            customSchema: {
+              properties: {
+                $property: {
+                  type: 'string'
+                },
+                $value: {
+                  type: ['object', 'null']
+                }
+              },
+              required: ['$property', '$value'],
+              type: 'object'
+            },
+            fields: {
+              $foreign$simpleProperty$collection: {
+                identity: true,
+                reference: {
+                  depth: 2,
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
+                type: 'integer'
+              },
+              $property: {
+                identity: true,
+                type: 'string'
+              },
+              $value: {
+                identity: true,
+                nullable: true,
+                type: 'json'
+              }
+            },
+            origin: '#/properties/complexObject/additionalProperties'
+          }
+        })
+    })
+
+    it('flattens complex schema with basic custom additionalProperties', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          simpleProperty: {
+            type: 'integer'
+          },
+          complexObject: {
+            type: 'object',
+            additionalProperties: {
+              type: 'integer'
+            }
+          }
+        },
+        required: ['simpleProperty']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          collection: {
+            fields: {
+              simpleProperty: {
+                identity: true,
+                type: 'integer'
+              }
+            },
+            origin: '#',
+            relatedEntities: [
+              'collection/complexObject'
+            ]
+          },
+          'collection/complexObject': {
+            fields: {
+              $foreign$simpleProperty$collection: {
+                identity: true,
+                reference: {
+                  depth: 1,
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
+                type: 'integer'
+              }
+            },
+            origin: '#/properties/complexObject',
+            relatedEntities: [
+              'collection/complexObject.@0'
+            ]
+          },
+          'collection/complexObject.@0': {
+            customSchema: {
+              properties: {
+                $property: {
+                  type: 'string'
+                },
+                $value: {
+                  type: 'integer'
+                }
+              },
+              required: ['$property', '$value'],
+              type: 'object'
+            },
+            fields: {
+              $foreign$simpleProperty$collection: {
+                identity: true,
+                reference: {
+                  depth: 2,
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
+                type: 'integer'
+              },
+              $property: {
+                identity: true,
+                type: 'string'
+              },
+              $value: {
+                identity: true,
+                type: 'integer'
+              }
+            },
+            origin: '#/properties/complexObject/additionalProperties'
+          }
+        })
+    })
+
+    it('flattens complex schema with complex custom additionalProperties', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          simpleProperty: {
+            type: 'integer'
+          },
+          complexObject: {
+            type: 'object',
+            additionalProperties: {
+              type: 'object',
+              properties: {
+                otherValue: {
+                  type: 'integer'
+                }
+              }
+            }
+          }
+        },
+        required: ['simpleProperty']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          collection: {
+            fields: {
+              simpleProperty: {
+                identity: true,
+                type: 'integer'
+              }
+            },
+            origin: '#',
+            relatedEntities: [
+              'collection/complexObject'
+            ]
+          },
+          'collection/complexObject': {
+            fields: {
+              $foreign$simpleProperty$collection: {
+                identity: true,
+                reference: {
+                  depth: 1,
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
+                type: 'integer'
+              }
+            },
+            origin: '#/properties/complexObject',
+            relatedEntities: [
+              'collection/complexObject.@0'
+            ]
+          },
+          'collection/complexObject.@0': {
+            customSchema: {
+              properties: {
+                $property: {
+                  type: 'string'
+                },
+                otherValue: {
+                  type: 'integer'
+                }
+              },
+              required: ['$property'],
+              type: 'object'
+            },
+            fields: {
+              $foreign$simpleProperty$collection: {
+                identity: true,
+                reference: {
+                  depth: 2,
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
+                type: 'integer'
+              },
+              $property: {
+                identity: true,
+                type: 'string'
+              },
+              otherValue: {
+                type: 'integer'
+              }
+            },
+            origin: '#/properties/complexObject/additionalProperties'
+          }
+        })
+    })
+
+    it('flattens complex schema with basic custom patternProperties', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          simpleProperty: {
+            type: 'integer'
+          },
+          complexObject: {
+            type: 'object',
+            patternProperties: {
+              '^.*$': {
+                type: 'integer'
+              }
+            }
+          }
+        },
+        required: ['simpleProperty']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          collection: {
+            fields: {
+              simpleProperty: {
+                identity: true,
+                type: 'integer'
+              }
+            },
+            origin: '#',
+            relatedEntities: [
+              'collection/complexObject'
+            ]
+          },
+          'collection/complexObject': {
+            fields: {
+              $foreign$simpleProperty$collection: {
+                identity: true,
+                reference: {
+                  depth: 1,
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
+                type: 'integer'
+              }
+            },
+            origin: '#/properties/complexObject',
+            relatedEntities: [
+              'collection/complexObject.@0'
+            ]
+          },
+          'collection/complexObject.@0': {
+            customSchema: {
+              properties: {
+                $property: {
+                  type: 'string'
+                },
+                $value: {
+                  type: 'integer'
+                }
+              },
+              required: ['$property', '$value'],
+              type: 'object'
+            },
+            fields: {
+              $foreign$simpleProperty$collection: {
+                identity: true,
+                reference: {
+                  depth: 2,
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
+                type: 'integer'
+              },
+              $property: {
+                identity: true,
+                type: 'string'
+              },
+              $value: {
+                identity: true,
+                type: 'integer'
+              }
+            },
+            origin: '#/properties/complexObject/patternProperties/^.*$'
+          }
+        })
+    })
+
+    it('flattens complex schema with complex custom patternProperties', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          simpleProperty: {
+            type: 'integer'
+          },
+          complexObject: {
+            type: 'object',
+            patternProperties: {
+              '^.*$': {
+                type: 'object',
+                properties: {
+                  otherValue: {
+                    type: 'integer'
+                  }
+                }
+              }
+            }
+          }
+        },
+        required: ['simpleProperty']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          collection: {
+            fields: {
+              simpleProperty: {
+                identity: true,
+                type: 'integer'
+              }
+            },
+            origin: '#',
+            relatedEntities: [
+              'collection/complexObject'
+            ]
+          },
+          'collection/complexObject': {
+            fields: {
+              $foreign$simpleProperty$collection: {
+                identity: true,
+                reference: {
+                  depth: 1,
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
+                type: 'integer'
+              }
+            },
+            origin: '#/properties/complexObject',
+            relatedEntities: [
+              'collection/complexObject.@0'
+            ]
+          },
+          'collection/complexObject.@0': {
+            customSchema: {
+              properties: {
+                $property: {
+                  type: 'string'
+                },
+                otherValue: {
+                  type: 'integer'
+                }
+              },
+              required: ['$property'],
+              type: 'object'
+            },
+            fields: {
+              $foreign$simpleProperty$collection: {
+                identity: true,
+                reference: {
+                  depth: 2,
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
+                type: 'integer'
+              },
+              $property: {
+                identity: true,
+                type: 'string'
+              },
+              otherValue: {
+                type: 'integer'
+              }
+            },
+            origin: '#/properties/complexObject/patternProperties/^.*$'
           }
         })
     })
