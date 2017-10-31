@@ -549,10 +549,10 @@ describe('SchemaFlatter', () => {
             },
             origin: '#/properties/complexObject',
             relatedEntities: [
-              'collection/complexObject.@0'
+              'collection/complexObject[@0]'
             ]
           },
-          'collection/complexObject.@0': {
+          'collection/complexObject[@0]': {
             customSchema: {
               properties: {
                 $property: {
@@ -634,10 +634,10 @@ describe('SchemaFlatter', () => {
             },
             origin: '#/properties/complexObject',
             relatedEntities: [
-              'collection/complexObject.@0'
+              'collection/complexObject[@0]'
             ]
           },
-          'collection/complexObject.@0': {
+          'collection/complexObject[@0]': {
             customSchema: {
               properties: {
                 $property: {
@@ -723,10 +723,10 @@ describe('SchemaFlatter', () => {
             },
             origin: '#/properties/complexObject',
             relatedEntities: [
-              'collection/complexObject.@0'
+              'collection/complexObject[@0]'
             ]
           },
-          'collection/complexObject.@0': {
+          'collection/complexObject[@0]': {
             customSchema: {
               properties: {
                 $property: {
@@ -808,10 +808,10 @@ describe('SchemaFlatter', () => {
             },
             origin: '#/properties/complexObject',
             relatedEntities: [
-              'collection/complexObject.@0'
+              'collection/complexObject[@0]'
             ]
           },
-          'collection/complexObject.@0': {
+          'collection/complexObject[@0]': {
             customSchema: {
               properties: {
                 $property: {
@@ -899,10 +899,10 @@ describe('SchemaFlatter', () => {
             },
             origin: '#/properties/complexObject',
             relatedEntities: [
-              'collection/complexObject.@0'
+              'collection/complexObject[@0]'
             ]
           },
-          'collection/complexObject.@0': {
+          'collection/complexObject[@0]': {
             customSchema: {
               properties: {
                 $property: {
