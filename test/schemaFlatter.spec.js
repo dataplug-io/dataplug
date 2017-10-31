@@ -168,6 +168,262 @@ describe('SchemaFlatter', () => {
         })
     })
 
+    it('flattens schema with basic array', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'integer'
+          },
+          array: {
+            type: 'array',
+            items: {
+              type: 'integer'
+            }
+          }
+        },
+        required: ['id']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          'collection': {
+            'fields': {
+              'id': {
+                'identity': true,
+                'type': 'integer'
+              }
+            },
+            'origin': '#',
+            'relatedEntities': [
+              'collection/array[@]'
+            ]
+          },
+          'collection/array[@]': {
+            'fields': {
+              '$foreign$id$collection': {
+                'identity': true,
+                'reference': {
+                  'depth': 1,
+                  'entity': 'collection',
+                  'field': 'id'
+                },
+                'type': 'integer'
+              },
+              '$value': {
+                'identity': true,
+                'type': 'integer'
+              }
+            },
+            'foreignFields': [
+              '$foreign$id$collection'
+            ],
+            'origin': '#/properties/array/items',
+            'customSchema': {
+              'properties': {
+                '$value': {
+                  'type': 'integer'
+                }
+              },
+              'required': [
+                '$value'
+              ],
+              'type': 'object'
+            }
+          }
+        })
+    })
+
+    it('flattens schema with basic array via ref', () => {
+      const jsonSchema = {
+        type: 'object',
+        definitions: {
+          item: {
+            type: 'integer'
+          }
+        },
+        properties: {
+          id: {
+            type: 'integer'
+          },
+          array: {
+            type: 'array',
+            items: {
+              $ref: '#/definitions/item'
+            }
+          }
+        },
+        required: ['id']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          'collection': {
+            'fields': {
+              'id': {
+                'identity': true,
+                'type': 'integer'
+              }
+            },
+            'origin': '#',
+            'relatedEntities': [
+              'collection/definitions/item'
+            ]
+          },
+          'collection/definitions/item': {
+            'fields': {
+              '$foreign$id$collection': {
+                'identity': true,
+                'reference': {
+                  'depth': 1,
+                  'entity': 'collection',
+                  'field': 'id'
+                },
+                'type': 'integer'
+              },
+              '$value': {
+                'identity': true,
+                'type': 'integer'
+              }
+            },
+            'foreignFields': [
+              '$foreign$id$collection'
+            ],
+            'origin': '#/definitions/item',
+            'customSchema': {
+              'properties': {
+                '$value': {
+                  'type': 'integer'
+                }
+              },
+              'required': [
+                '$value'
+              ],
+              'type': 'object'
+            }
+          }
+        })
+    })
+
+    it('flattens schema with complex array', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'integer'
+          },
+          array: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                value: {
+                  type: 'string'
+                }
+              }
+            }
+          }
+        },
+        required: ['id']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          'collection': {
+            'fields': {
+              'id': {
+                'identity': true,
+                'type': 'integer'
+              }
+            },
+            'origin': '#',
+            'relatedEntities': [
+              'collection/array[@]'
+            ]
+          },
+          'collection/array[@]': {
+            'fields': {
+              '$foreign$id$collection': {
+                'identity': true,
+                'reference': {
+                  'depth': 1,
+                  'entity': 'collection',
+                  'field': 'id'
+                },
+                'type': 'integer'
+              },
+              'value': {
+                'type': 'string'
+              }
+            },
+            'foreignFields': [
+              '$foreign$id$collection'
+            ],
+            'origin': '#/properties/array/items'
+          }
+        })
+    })
+
+    it('flattens schema with complex array via $ref', () => {
+      const jsonSchema = {
+        type: 'object',
+        definitions: {
+          item: {
+            type: 'object',
+            properties: {
+              value: {
+                type: 'string'
+              }
+            }
+          }
+        },
+        properties: {
+          id: {
+            type: 'integer'
+          },
+          array: {
+            type: 'array',
+            items: {
+              $ref: '#/definitions/item'
+            }
+          }
+        },
+        required: ['id']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          'collection': {
+            'fields': {
+              'id': {
+                'identity': true,
+                'type': 'integer'
+              }
+            },
+            'origin': '#',
+            'relatedEntities': [
+              'collection/definitions/item'
+            ]
+          },
+          'collection/definitions/item': {
+            'fields': {
+              '$foreign$id$collection': {
+                'identity': true,
+                'reference': {
+                  'depth': 1,
+                  'entity': 'collection',
+                  'field': 'id'
+                },
+                'type': 'integer'
+              },
+              'value': {
+                'type': 'string'
+              }
+            },
+            'foreignFields': [
+              '$foreign$id$collection'
+            ],
+            'origin': '#/definitions/item'
+          }
+        })
+    })
+
     it('throws when flattens schema with tuple-aray', () => {
       const jsonSchema = {
         type: 'object',
