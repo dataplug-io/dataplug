@@ -34,12 +34,6 @@ describe('dataplug', () => {
       .that.is.an('function')
   })
 
-  it('has "Flatter" class', () => {
-    dataplug
-      .should.have.property('Flatter')
-      .that.is.an('function')
-  })
-
   it('has "FlatterNaming" class', () => {
     dataplug
       .should.have.property('FlatterNaming')
@@ -73,6 +67,12 @@ describe('dataplug', () => {
   it('has "SchemaFlatter" class', () => {
     dataplug
       .should.have.property('SchemaFlatter')
+      .that.is.an('function')
+  })
+
+  it('has "StreamFlatter" class', () => {
+    dataplug
+      .should.have.property('StreamFlatter')
       .that.is.an('function')
   })
 
