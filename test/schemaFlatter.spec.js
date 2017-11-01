@@ -200,7 +200,7 @@ describe('SchemaFlatter', () => {
           },
           'collection/array[@]': {
             fields: {
-              $foreign$id$collection: {
+              '$collection~id': {
                 identity: true,
                 reference: {
                   depth: 1,
@@ -262,12 +262,12 @@ describe('SchemaFlatter', () => {
             },
             'origin': '#',
             'relatedEntities': [
-              'collection/definitions/item'
+              'collection/item'
             ]
           },
-          'collection/definitions/item': {
+          'collection/item': {
             'fields': {
-              '$foreign$id$collection': {
+              '$collection~id': {
                 'identity': true,
                 'reference': {
                   'depth': 1,
@@ -334,7 +334,7 @@ describe('SchemaFlatter', () => {
           },
           'collection/array[@]': {
             'fields': {
-              '$foreign$id$collection': {
+              '$collection~id': {
                 'identity': true,
                 'reference': {
                   'depth': 1,
@@ -389,12 +389,12 @@ describe('SchemaFlatter', () => {
             },
             'origin': '#',
             'relatedEntities': [
-              'collection/definitions/item'
+              'collection/item'
             ]
           },
-          'collection/definitions/item': {
+          'collection/item': {
             'fields': {
-              '$foreign$id$collection': {
+              '$collection~id': {
                 'identity': true,
                 'reference': {
                   'depth': 1,
@@ -489,7 +489,7 @@ describe('SchemaFlatter', () => {
           },
           'collection/complexObject': {
             fields: {
-              '$foreign$simpleProperty$collection': {
+              '$collection~simpleProperty': {
                 identity: true,
                 type: 'integer',
                 reference: {
@@ -537,7 +537,7 @@ describe('SchemaFlatter', () => {
           },
           'collection/complexObject': {
             fields: {
-              $foreign$simpleProperty$collection: {
+              '$collection~simpleProperty': {
                 identity: true,
                 reference: {
                   depth: 1,
@@ -566,7 +566,7 @@ describe('SchemaFlatter', () => {
               type: 'object'
             },
             fields: {
-              $foreign$simpleProperty$collection: {
+              '$collection~simpleProperty': {
                 identity: true,
                 reference: {
                   depth: 2,
@@ -622,7 +622,7 @@ describe('SchemaFlatter', () => {
           },
           'collection/complexObject': {
             fields: {
-              $foreign$simpleProperty$collection: {
+              '$collection~simpleProperty': {
                 identity: true,
                 reference: {
                   depth: 1,
@@ -651,7 +651,7 @@ describe('SchemaFlatter', () => {
               type: 'object'
             },
             fields: {
-              $foreign$simpleProperty$collection: {
+              '$collection~simpleProperty': {
                 identity: true,
                 reference: {
                   depth: 2,
@@ -711,7 +711,7 @@ describe('SchemaFlatter', () => {
           },
           'collection/complexObject': {
             fields: {
-              $foreign$simpleProperty$collection: {
+              '$collection~simpleProperty': {
                 identity: true,
                 reference: {
                   depth: 1,
@@ -740,7 +740,7 @@ describe('SchemaFlatter', () => {
               type: 'object'
             },
             fields: {
-              $foreign$simpleProperty$collection: {
+              '$collection~simpleProperty': {
                 identity: true,
                 reference: {
                   depth: 2,
@@ -796,7 +796,7 @@ describe('SchemaFlatter', () => {
           },
           'collection/complexObject': {
             fields: {
-              $foreign$simpleProperty$collection: {
+              '$collection~simpleProperty': {
                 identity: true,
                 reference: {
                   depth: 1,
@@ -825,7 +825,7 @@ describe('SchemaFlatter', () => {
               type: 'object'
             },
             fields: {
-              $foreign$simpleProperty$collection: {
+              '$collection~simpleProperty': {
                 identity: true,
                 reference: {
                   depth: 2,
@@ -887,7 +887,7 @@ describe('SchemaFlatter', () => {
           },
           'collection/complexObject': {
             fields: {
-              $foreign$simpleProperty$collection: {
+              '$collection~simpleProperty': {
                 identity: true,
                 reference: {
                   depth: 1,
@@ -916,7 +916,7 @@ describe('SchemaFlatter', () => {
               type: 'object'
             },
             fields: {
-              $foreign$simpleProperty$collection: {
+              '$collection~simpleProperty': {
                 identity: true,
                 reference: {
                   depth: 2,
@@ -1016,11 +1016,11 @@ describe('SchemaFlatter', () => {
     //           'collection/collection/node'
     //         ]
     //       },
-    //       'collection/definitions/node': {
+    //       'collection/node': {
     //         fields: {
-    //           '$FID:id$collection/definitions/node': { // this?
+    //           '$FID:id$collection/node': { // this?
     //             identity: true,
-    //             referencedEntity: 'collection/definitions/node',
+    //             referencedEntity: 'collection/node',
     //             referencedEntityField: 'id',
     //             type: 'integer'
     //           },
@@ -1030,7 +1030,7 @@ describe('SchemaFlatter', () => {
     //           }
     //         },
     //         relatedEntities: [
-    //           'collection/definitions/node',
+    //           'collection/node',
     //           'collection'
     //         ]
     //       }
@@ -1139,7 +1139,7 @@ describe('SchemaFlatter', () => {
             },
             'collection/complexObject': {
               properties: {
-                '$foreign$simpleProperty$collection': {
+                '$collection~simpleProperty': {
                   type: ['integer']
                 },
                 otherSimpleProperty: {
@@ -1147,7 +1147,7 @@ describe('SchemaFlatter', () => {
                 }
               },
               required: [
-                '$foreign$simpleProperty$collection'
+                '$collection~simpleProperty'
               ],
               type: 'object'
             }

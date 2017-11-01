@@ -19,6 +19,11 @@ describe('FlatterNaming', () => {
       new FlatterNaming().placeholder
         .should.be.equal(FlatterNaming.DEFAULT_PLACEHOLDER)
     })
+
+    it('has default value for \'scopeSpecifier\'', () => {
+      new FlatterNaming().scopeSpecifier
+        .should.be.equal(FlatterNaming.DEFAULT_SCOPE_SPECIFIER)
+    })
   })
 
   describe('#getEntityFqName()', () => {

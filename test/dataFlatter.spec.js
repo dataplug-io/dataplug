@@ -93,7 +93,7 @@ describe('DataFlatter', () => {
             simpleProperty: 0
           }],
           'collection/complexObject': [{
-            '$foreign$simpleProperty$collection': 0,
+            '$collection~simpleProperty': 0,
             otherSimpleProperty: 0
           }]
         })
