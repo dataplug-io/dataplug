@@ -194,9 +194,9 @@ describe('SchemaFlatter', () => {
               }
             },
             origin: '#',
-            relatedEntities: [
-              'collection/array[@]'
-            ]
+            relations: {
+              'collection/array[@]': 'one-to-many'
+            }
           },
           'collection/array[@]': {
             fields: {
@@ -261,9 +261,9 @@ describe('SchemaFlatter', () => {
               }
             },
             'origin': '#',
-            'relatedEntities': [
-              'collection/item'
-            ]
+            relations: {
+              'collection/item': 'one-to-many'
+            }
           },
           'collection/item': {
             'fields': {
@@ -328,9 +328,9 @@ describe('SchemaFlatter', () => {
               }
             },
             'origin': '#',
-            'relatedEntities': [
-              'collection/array[@]'
-            ]
+            relations: {
+              'collection/array[@]': 'one-to-many'
+            }
           },
           'collection/array[@]': {
             'fields': {
@@ -392,9 +392,9 @@ describe('SchemaFlatter', () => {
               }
             },
             'origin': '#',
-            'relatedEntities': [
-              'collection/item'
-            ]
+            relations: {
+              'collection/item': 'one-to-many'
+            }
           },
           'collection/item': {
             'fields': {
@@ -490,9 +490,9 @@ describe('SchemaFlatter', () => {
                 type: 'integer'
               }
             },
-            relatedEntities: [
-              'collection/complexObject'
-            ],
+            relations: {
+              'collection/complexObject': 'one-to-one'
+            },
             origin: '#'
           },
           'collection/complexObject': {
@@ -543,9 +543,9 @@ describe('SchemaFlatter', () => {
               }
             },
             origin: '#',
-            relatedEntities: [
-              'collection/complexObject'
-            ]
+            relations: {
+              'collection/complexObject': 'one-to-one'
+            }
           },
           'collection/complexObject': {
             fields: {
@@ -564,9 +564,9 @@ describe('SchemaFlatter', () => {
               }
             },
             origin: '#/properties/complexObject',
-            relatedEntities: [
-              'collection/complexObject[@0]'
-            ]
+            relations: {
+              'collection/complexObject[@0]': 'one-to-many'
+            }
           },
           'collection/complexObject[@0]': {
             customSchema: {
@@ -635,9 +635,9 @@ describe('SchemaFlatter', () => {
               }
             },
             origin: '#',
-            relatedEntities: [
-              'collection/complexObject'
-            ]
+            relations: {
+              'collection/complexObject': 'one-to-one'
+            }
           },
           'collection/complexObject': {
             fields: {
@@ -656,9 +656,9 @@ describe('SchemaFlatter', () => {
               }
             },
             origin: '#/properties/complexObject',
-            relatedEntities: [
-              'collection/complexObject[@0]'
-            ]
+            relations: {
+              'collection/complexObject[@0]': 'one-to-many'
+            }
           },
           'collection/complexObject[@0]': {
             customSchema: {
@@ -731,9 +731,9 @@ describe('SchemaFlatter', () => {
               }
             },
             origin: '#',
-            relatedEntities: [
-              'collection/complexObject'
-            ]
+            relations: {
+              'collection/complexObject': 'one-to-one'
+            }
           },
           'collection/complexObject': {
             fields: {
@@ -752,9 +752,9 @@ describe('SchemaFlatter', () => {
               }
             },
             origin: '#/properties/complexObject',
-            relatedEntities: [
-              'collection/complexObject[@0]'
-            ]
+            relations: {
+              'collection/complexObject[@0]': 'one-to-many'
+            }
           },
           'collection/complexObject[@0]': {
             customSchema: {
@@ -824,9 +824,9 @@ describe('SchemaFlatter', () => {
               }
             },
             origin: '#',
-            relatedEntities: [
-              'collection/complexObject'
-            ]
+            relations: {
+              'collection/complexObject': 'one-to-one'
+            }
           },
           'collection/complexObject': {
             fields: {
@@ -845,9 +845,9 @@ describe('SchemaFlatter', () => {
               }
             },
             origin: '#/properties/complexObject',
-            relatedEntities: [
-              'collection/complexObject[@0]'
-            ]
+            relations: {
+              'collection/complexObject[@0]': 'one-to-many'
+            }
           },
           'collection/complexObject[@0]': {
             customSchema: {
@@ -922,9 +922,9 @@ describe('SchemaFlatter', () => {
               }
             },
             origin: '#',
-            relatedEntities: [
-              'collection/complexObject'
-            ]
+            relations: {
+              'collection/complexObject': 'one-to-one'
+            }
           },
           'collection/complexObject': {
             fields: {
@@ -943,9 +943,9 @@ describe('SchemaFlatter', () => {
               }
             },
             origin: '#/properties/complexObject',
-            relatedEntities: [
-              'collection/complexObject[@0]'
-            ]
+            relations: {
+              'collection/complexObject[@0]': 'one-to-many'
+            }
           },
           'collection/complexObject[@0]': {
             customSchema: {
@@ -1061,7 +1061,7 @@ describe('SchemaFlatter', () => {
     //             type: 'integer'
     //           }
     //         },
-    //         relatedEntities: [
+    //         relations: [
     //           'collection/collection/node'
     //         ]
     //       },
@@ -1078,7 +1078,7 @@ describe('SchemaFlatter', () => {
     //             type: 'integer'
     //           }
     //         },
-    //         relatedEntities: [
+    //         relations: [
     //           'collection/node',
     //           'collection'
     //         ]
