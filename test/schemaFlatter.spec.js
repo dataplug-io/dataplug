@@ -214,7 +214,6 @@ describe('SchemaFlatter', () => {
                 type: 'integer'
               },
               $value: {
-                identity: true,
                 type: 'integer'
               }
             },
@@ -225,9 +224,6 @@ describe('SchemaFlatter', () => {
                   type: 'integer'
                 }
               },
-              required: [
-                '$value'
-              ],
               type: 'object'
             }
           }
@@ -285,7 +281,6 @@ describe('SchemaFlatter', () => {
                 'type': 'integer'
               },
               '$value': {
-                'identity': true,
                 'type': 'integer'
               }
             },
@@ -296,9 +291,6 @@ describe('SchemaFlatter', () => {
                   'type': 'integer'
                 }
               },
-              'required': [
-                '$value'
-              ],
               'type': 'object'
             }
           }
@@ -586,7 +578,7 @@ describe('SchemaFlatter', () => {
                   type: ['object', 'null']
                 }
               },
-              required: ['$property', '$value'],
+              required: ['$property'],
               type: 'object'
             },
             fields: {
@@ -608,7 +600,6 @@ describe('SchemaFlatter', () => {
                 type: 'string'
               },
               $value: {
-                identity: true,
                 nullable: true,
                 type: 'json'
               }
@@ -679,7 +670,7 @@ describe('SchemaFlatter', () => {
                   type: 'integer'
                 }
               },
-              required: ['$property', '$value'],
+              required: ['$property'],
               type: 'object'
             },
             fields: {
@@ -701,7 +692,6 @@ describe('SchemaFlatter', () => {
                 type: 'string'
               },
               $value: {
-                identity: true,
                 type: 'integer'
               }
             },
@@ -869,7 +859,7 @@ describe('SchemaFlatter', () => {
                   type: 'integer'
                 }
               },
-              required: ['$property', '$value'],
+              required: ['$property'],
               type: 'object'
             },
             fields: {
@@ -891,7 +881,6 @@ describe('SchemaFlatter', () => {
                 type: 'string'
               },
               $value: {
-                identity: true,
                 type: 'integer'
               }
             },
