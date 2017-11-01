@@ -207,6 +207,10 @@ describe('SchemaFlatter', () => {
                   entity: 'collection',
                   field: 'id'
                 },
+                relation: {
+                  entity: 'collection',
+                  field: 'id'
+                },
                 type: 'integer'
               },
               $value: {
@@ -269,10 +273,14 @@ describe('SchemaFlatter', () => {
             'fields': {
               '$collection~id': {
                 'identity': true,
-                'reference': {
-                  'depth': 1,
-                  'entity': 'collection',
-                  'field': 'id'
+                reference: {
+                  depth: 1,
+                  entity: 'collection',
+                  field: 'id'
+                },
+                relation: {
+                  entity: 'collection',
+                  field: 'id'
                 },
                 'type': 'integer'
               },
@@ -336,10 +344,14 @@ describe('SchemaFlatter', () => {
             'fields': {
               '$collection~id': {
                 'identity': true,
-                'reference': {
-                  'depth': 1,
-                  'entity': 'collection',
-                  'field': 'id'
+                reference: {
+                  depth: 1,
+                  entity: 'collection',
+                  field: 'id'
+                },
+                relation: {
+                  entity: 'collection',
+                  field: 'id'
                 },
                 'type': 'integer'
               },
@@ -396,10 +408,14 @@ describe('SchemaFlatter', () => {
             'fields': {
               '$collection~id': {
                 'identity': true,
-                'reference': {
-                  'depth': 1,
-                  'entity': 'collection',
-                  'field': 'id'
+                reference: {
+                  depth: 1,
+                  entity: 'collection',
+                  field: 'id'
+                },
+                relation: {
+                  entity: 'collection',
+                  field: 'id'
                 },
                 'type': 'integer'
               },
@@ -496,6 +512,10 @@ describe('SchemaFlatter', () => {
                   entity: 'collection',
                   field: 'simpleProperty',
                   depth: 1
+                },
+                relation: {
+                  entity: 'collection',
+                  field: 'simpleProperty'
                 }
               },
               otherSimpleProperty: {
@@ -544,6 +564,10 @@ describe('SchemaFlatter', () => {
                   entity: 'collection',
                   field: 'simpleProperty'
                 },
+                relation: {
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
                 type: 'integer'
               }
             },
@@ -572,6 +596,10 @@ describe('SchemaFlatter', () => {
                   depth: 2,
                   entity: 'collection',
                   field: 'simpleProperty'
+                },
+                relation: {
+                  entity: 'collection/complexObject',
+                  field: '$collection~simpleProperty'
                 },
                 type: 'integer'
               },
@@ -629,6 +657,10 @@ describe('SchemaFlatter', () => {
                   entity: 'collection',
                   field: 'simpleProperty'
                 },
+                relation: {
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
                 type: 'integer'
               }
             },
@@ -657,6 +689,10 @@ describe('SchemaFlatter', () => {
                   depth: 2,
                   entity: 'collection',
                   field: 'simpleProperty'
+                },
+                relation: {
+                  entity: 'collection/complexObject',
+                  field: '$collection~simpleProperty'
                 },
                 type: 'integer'
               },
@@ -718,6 +754,10 @@ describe('SchemaFlatter', () => {
                   entity: 'collection',
                   field: 'simpleProperty'
                 },
+                relation: {
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
                 type: 'integer'
               }
             },
@@ -746,6 +786,10 @@ describe('SchemaFlatter', () => {
                   depth: 2,
                   entity: 'collection',
                   field: 'simpleProperty'
+                },
+                relation: {
+                  entity: 'collection/complexObject',
+                  field: '$collection~simpleProperty'
                 },
                 type: 'integer'
               },
@@ -803,6 +847,10 @@ describe('SchemaFlatter', () => {
                   entity: 'collection',
                   field: 'simpleProperty'
                 },
+                relation: {
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
                 type: 'integer'
               }
             },
@@ -831,6 +879,10 @@ describe('SchemaFlatter', () => {
                   depth: 2,
                   entity: 'collection',
                   field: 'simpleProperty'
+                },
+                relation: {
+                  entity: 'collection/complexObject',
+                  field: '$collection~simpleProperty'
                 },
                 type: 'integer'
               },
@@ -894,6 +946,10 @@ describe('SchemaFlatter', () => {
                   entity: 'collection',
                   field: 'simpleProperty'
                 },
+                relation: {
+                  entity: 'collection',
+                  field: 'simpleProperty'
+                },
                 type: 'integer'
               }
             },
@@ -922,6 +978,10 @@ describe('SchemaFlatter', () => {
                   depth: 2,
                   entity: 'collection',
                   field: 'simpleProperty'
+                },
+                relation: {
+                  entity: 'collection/complexObject',
+                  field: '$collection~simpleProperty'
                 },
                 type: 'integer'
               },
