@@ -34,6 +34,12 @@ describe('dataplug', () => {
       .that.is.an('function')
   })
 
+  it('has "FlattenedMetadataFilter" class', () => {
+    dataplug
+      .should.have.property('FlattenedMetadataFilter')
+      .that.is.an('function')
+  })
+
   it('has "FlatterNaming" class', () => {
     dataplug
       .should.have.property('FlatterNaming')
