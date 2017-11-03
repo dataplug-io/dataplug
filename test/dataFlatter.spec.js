@@ -98,5 +98,78 @@ describe('DataFlatter', () => {
           }]
         })
     })
+
+    it('includes metadata', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          simpleProperty: {
+            type: 'integer'
+          },
+          complexObject: {
+            type: 'object',
+            properties: {
+              otherSimpleProperty: {
+                type: 'integer'
+              }
+            }
+          }
+        },
+        required: ['simpleProperty']
+      }
+      const data = {
+        simpleProperty: 0,
+        complexObject: {
+          otherSimpleProperty: 0
+        }
+      }
+      new DataFlatter(jsonSchema, 'collection').flatten(data, true)
+        .should.deep.equal({
+          collection: {
+            data: [{
+              simpleProperty: 0
+            }],
+            metadata: {
+              fields: {
+                simpleProperty: {
+                  identity: true,
+                  type: 'integer'
+                }
+              },
+              origin: '#',
+              relations: {
+                'collection/complexObject': 'one-to-one'
+              }
+            }
+          },
+          'collection/complexObject': {
+            data: [{
+              '$collection~simpleProperty': 0,
+              otherSimpleProperty: 0
+            }],
+            metadata: {
+              fields: {
+                '$collection~simpleProperty': {
+                  identity: true,
+                  reference: {
+                    depth: 1,
+                    entity: 'collection',
+                    field: 'simpleProperty'
+                  },
+                  relation: {
+                    entity: 'collection',
+                    field: 'simpleProperty'
+                  },
+                  type: 'integer'
+                },
+                otherSimpleProperty: {
+                  type: 'integer'
+                }
+              },
+              origin: '#/properties/complexObject'
+            }
+          }
+        })
+    })
   })
 })
