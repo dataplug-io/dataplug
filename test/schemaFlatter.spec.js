@@ -168,6 +168,62 @@ describe('SchemaFlatter', () => {
         })
     })
 
+    it('flattens schema with nullable complex property', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'integer'
+          },
+          complex: {
+            type: ['object', 'null'],
+            properties: {
+              property: {
+                type: 'string'
+              }
+            }
+          }
+        },
+        required: ['id']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          collection: {
+            fields: {
+              id: {
+                identity: true,
+                type: 'integer'
+              }
+            },
+            origin: '#',
+            relations: {
+              'collection/complex': 'one-to-one'
+            }
+          },
+          'collection/complex': {
+            fields: {
+              '$collection~id': {
+                identity: true,
+                reference: {
+                  depth: 1,
+                  entity: 'collection',
+                  field: 'id'
+                },
+                relation: {
+                  entity: 'collection',
+                  field: 'id'
+                },
+                type: 'integer'
+              },
+              property: {
+                type: 'string'
+              }
+            },
+            origin: '#/properties/complex'
+          }
+        })
+    })
+
     it('flattens schema with basic array', () => {
       const jsonSchema = {
         type: 'object',
@@ -253,22 +309,22 @@ describe('SchemaFlatter', () => {
       }
       new SchemaFlatter().flatten(jsonSchema, 'collection')
         .should.be.deep.equal({
-          'collection': {
-            'fields': {
-              'id': {
-                'identity': true,
-                'type': 'integer'
+          collection: {
+            fields: {
+              id: {
+                identity: true,
+                type: 'integer'
               }
             },
-            'origin': '#',
+            origin: '#',
             relations: {
               'collection/item': 'one-to-many'
             }
           },
           'collection/item': {
-            'fields': {
+            fields: {
               '$collection~id': {
-                'identity': true,
+                identity: true,
                 reference: {
                   depth: 1,
                   entity: 'collection',
@@ -278,20 +334,82 @@ describe('SchemaFlatter', () => {
                   entity: 'collection',
                   field: 'id'
                 },
-                'type': 'integer'
+                type: 'integer'
               },
               '$value': {
-                'type': 'integer'
+                type: 'integer'
               }
             },
-            'origin': '#/definitions/item',
+            origin: '#/definitions/item',
             'customSchema': {
               'properties': {
                 '$value': {
-                  'type': 'integer'
+                  type: 'integer'
                 }
               },
-              'type': 'object'
+              type: 'object'
+            }
+          }
+        })
+    })
+
+    it('flattens schema with basic nullable array', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'integer'
+          },
+          array: {
+            type: ['array', 'null'],
+            items: {
+              type: 'integer'
+            }
+          }
+        },
+        required: ['id']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          collection: {
+            fields: {
+              id: {
+                identity: true,
+                type: 'integer'
+              }
+            },
+            origin: '#',
+            relations: {
+              'collection/array[@]': 'one-to-many'
+            }
+          },
+          'collection/array[@]': {
+            fields: {
+              '$collection~id': {
+                identity: true,
+                reference: {
+                  depth: 1,
+                  entity: 'collection',
+                  field: 'id'
+                },
+                relation: {
+                  entity: 'collection',
+                  field: 'id'
+                },
+                type: 'integer'
+              },
+              $value: {
+                type: 'integer'
+              }
+            },
+            origin: '#/properties/array/items',
+            customSchema: {
+              properties: {
+                $value: {
+                  type: 'integer'
+                }
+              },
+              type: 'object'
             }
           }
         })
@@ -320,22 +438,22 @@ describe('SchemaFlatter', () => {
       }
       new SchemaFlatter().flatten(jsonSchema, 'collection')
         .should.be.deep.equal({
-          'collection': {
-            'fields': {
-              'id': {
-                'identity': true,
-                'type': 'integer'
+          collection: {
+            fields: {
+              id: {
+                identity: true,
+                type: 'integer'
               }
             },
-            'origin': '#',
+            origin: '#',
             relations: {
               'collection/array[@]': 'one-to-many'
             }
           },
           'collection/array[@]': {
-            'fields': {
+            fields: {
               '$collection~id': {
-                'identity': true,
+                identity: true,
                 reference: {
                   depth: 1,
                   entity: 'collection',
@@ -345,13 +463,13 @@ describe('SchemaFlatter', () => {
                   entity: 'collection',
                   field: 'id'
                 },
-                'type': 'integer'
+                type: 'integer'
               },
-              'value': {
-                'type': 'string'
+              value: {
+                type: 'string'
               }
             },
-            'origin': '#/properties/array/items'
+            origin: '#/properties/array/items'
           }
         })
     })
@@ -384,22 +502,22 @@ describe('SchemaFlatter', () => {
       }
       new SchemaFlatter().flatten(jsonSchema, 'collection')
         .should.be.deep.equal({
-          'collection': {
-            'fields': {
-              'id': {
-                'identity': true,
-                'type': 'integer'
+          collection: {
+            fields: {
+              id: {
+                identity: true,
+                type: 'integer'
               }
             },
-            'origin': '#',
+            origin: '#',
             relations: {
               'collection/item': 'one-to-many'
             }
           },
           'collection/item': {
-            'fields': {
+            fields: {
               '$collection~id': {
-                'identity': true,
+                identity: true,
                 reference: {
                   depth: 1,
                   entity: 'collection',
@@ -409,13 +527,13 @@ describe('SchemaFlatter', () => {
                   entity: 'collection',
                   field: 'id'
                 },
-                'type': 'integer'
+                type: 'integer'
               },
-              'value': {
-                'type': 'string'
+              value: {
+                type: 'string'
               }
             },
-            'origin': '#/definitions/item'
+            origin: '#/definitions/item'
           }
         })
     })
@@ -483,7 +601,7 @@ describe('SchemaFlatter', () => {
       }
       new SchemaFlatter().flatten(jsonSchema, 'collection')
         .should.be.deep.equal({
-          'collection': {
+          collection: {
             fields: {
               simpleProperty: {
                 identity: true,
@@ -1054,7 +1172,7 @@ describe('SchemaFlatter', () => {
     //   }
     //   new SchemaFlatter().flatten(jsonSchema, 'collection')
     //     .should.be.deep.equal({
-    //       'collection': {
+    //       collection: {
     //         fields: {
     //           treeId: {
     //             identity: true,
@@ -1115,11 +1233,11 @@ describe('SchemaFlatter', () => {
       flattenedJsonSchema
         .should.be.deep.equal({
           'definitions': {
-            'collection': {
+            collection: {
               type: 'object',
               'properties': {
                 'booleanProperty': {
-                  'type': ['boolean']
+                  type: ['boolean']
                 },
                 'enumProperty': {
                   'enum': [
@@ -1128,26 +1246,26 @@ describe('SchemaFlatter', () => {
                   ]
                 },
                 'integerProperty': {
-                  'type': ['integer']
+                  type: ['integer']
                 },
                 'objectProperty': {
-                  'type': ['object']
+                  type: ['object']
                 },
                 'stringProperty': {
-                  'type': ['string']
+                  type: ['string']
                 }
               }
             }
           },
           'properties': {
-            'collection': {
+            collection: {
               'items': {
                 '$ref': '#/definitions/collection'
               },
-              'type': 'array'
+              type: 'array'
             }
           },
-          'type': 'object'
+          type: 'object'
         })
     })
 
