@@ -171,5 +171,35 @@ describe('DataFlatter', () => {
           }
         })
     })
+
+    it('throws on invalid data', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          simpleProperty: {
+            type: 'integer'
+          },
+          complexObject: {
+            type: 'object',
+            properties: {
+              otherSimpleProperty: {
+                type: 'integer'
+              }
+            }
+          }
+        },
+        additionalProperties: false,
+        required: ['simpleProperty']
+      }
+      const data = {
+        simpleProperty: 0,
+        complexObject: {
+          otherSimpleProperty: 0
+        },
+        extraProperty: true
+      };
+      (() => new DataFlatter(jsonSchema, 'collection').flatten(data))
+        .should.throw(/Invalid data/)
+    })
   })
 })

@@ -65,11 +65,11 @@ describe('SchemaFlatter <> DataFlatter compatibility', () => {
       }
     }
     const data = {
-      booleanProperty: null,
-      integerProperty: null,
-      stringProperty: null,
-      enumProperty: null,
-      objectProperty: null
+      booleanProperty: undefined,
+      integerProperty: undefined,
+      stringProperty: undefined,
+      enumProperty: undefined,
+      objectProperty: undefined
     }
     const validate = new Ajv().compile(new SchemaFlatter().flattenToJsonSchema(jsonSchema, 'collection'))
     validate(new DataFlatter(jsonSchema, 'collection').flatten(data))
