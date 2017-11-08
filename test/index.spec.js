@@ -108,14 +108,14 @@ describe('dataplug', () => {
 
   describe('#source()', () => {
     it('creates an instance of Source', () => {
-      dataplug.source(null, null)
+      dataplug.source({}, null)
         .should.be.an.instanceof(dataplug.Source)
     })
   })
 
   describe('#target()', () => {
     it('creates an instance of Target', () => {
-      dataplug.target(null, null)
+      dataplug.target({}, null)
         .should.be.an.instanceof(dataplug.Target)
     })
   })
