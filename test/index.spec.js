@@ -40,6 +40,12 @@ describe('dataplug', () => {
       .that.is.an('function')
   })
 
+  it('has "FlattenedTransformStream" class', () => {
+    dataplug
+      .should.have.property('FlattenedTransformStream')
+      .that.is.an('function')
+  })
+
   it('has "FlatterNaming" class', () => {
     dataplug
       .should.have.property('FlatterNaming')
