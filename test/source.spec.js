@@ -19,4 +19,18 @@ describe('Source', () => {
       .should.eventually.be.deep.equal(stream)
       .notify(done)
   })
+
+  it('supports instantly-available streams', (done) => {
+    const stream = new PassThrough()
+    new Source({}, () => [stream]).createOutput({})
+      .should.eventually.be.deep.equal([stream])
+      .notify(done)
+  })
+
+  it('supports promised streams', (done) => {
+    const stream = new PassThrough()
+    new Source({}, async () => [stream]).createOutput({})
+      .should.eventually.be.deep.equal([stream])
+      .notify(done)
+  })
 })
