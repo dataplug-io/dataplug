@@ -64,6 +64,12 @@ describe('dataplug', () => {
       .that.is.an('function')
   })
 
+  it('has "Replicator" class', () => {
+    dataplug
+      .should.have.property('Replicator')
+      .that.is.an('function')
+  })
+
   it('has "ReadableSequence" class', () => {
     dataplug
       .should.have.property('ReadableSequence')
