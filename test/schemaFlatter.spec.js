@@ -168,6 +168,188 @@ describe('SchemaFlatter', () => {
         })
     })
 
+    it('flattens basic schema with basic arrays', () => {
+      const jsonSchema = {
+        type: 'object',
+        properties: {
+          identityProperty: {
+            type: 'integer'
+          },
+          booleanProperty: {
+            type: 'array',
+            items: {
+              type: 'boolean'
+            }
+          },
+          integerProperty: {
+            type: 'array',
+            items: {
+              type: 'integer'
+            }
+          },
+          stringProperty: {
+            type: 'array',
+            items: {
+              type: 'string'
+            }
+          },
+          enumProperty: {
+            type: 'array',
+            items: {
+              enum: ['option1', 'option2']
+            }
+          },
+          objectProperty: {
+            type: 'array',
+            items: {
+              type: 'object'
+            }
+          }
+        },
+        required: ['identityProperty']
+      }
+      new SchemaFlatter().flatten(jsonSchema, 'collection')
+        .should.be.deep.equal({
+          collection: {
+            fields: {
+              identityProperty: {
+                type: 'integer',
+                identity: true
+              }
+            },
+            origin: '#',
+            relations: {
+              'collection/booleanProperty[@]': 'one-to-many',
+              'collection/integerProperty[@]': 'one-to-many',
+              'collection/stringProperty[@]': 'one-to-many',
+              'collection/enumProperty[@]': 'one-to-many',
+              'collection/objectProperty[@]': 'one-to-many'
+            }
+          },
+          'collection/booleanProperty[@]': {
+            fields: {
+              '$collection~identityProperty': {
+                type: 'integer',
+                identity: true,
+                reference: {
+                  entity: 'collection',
+                  field: 'identityProperty',
+                  depth: 2
+                },
+                relation: {
+                  entity: 'collection',
+                  field: 'identityProperty'
+                }
+              },
+              $value: {
+                type: 'boolean',
+                reference: {
+                  field: ''
+                }
+              }
+            },
+            origin: '#/properties/booleanProperty/items'
+          },
+          'collection/integerProperty[@]': {
+            fields: {
+              '$collection~identityProperty': {
+                type: 'integer',
+                identity: true,
+                reference: {
+                  entity: 'collection',
+                  field: 'identityProperty',
+                  depth: 2
+                },
+                relation: {
+                  entity: 'collection',
+                  field: 'identityProperty'
+                }
+              },
+              $value: {
+                type: 'integer',
+                reference: {
+                  field: ''
+                }
+              }
+            },
+            origin: '#/properties/integerProperty/items'
+          },
+          'collection/stringProperty[@]': {
+            fields: {
+              '$collection~identityProperty': {
+                type: 'integer',
+                identity: true,
+                reference: {
+                  entity: 'collection',
+                  field: 'identityProperty',
+                  depth: 2
+                },
+                relation: {
+                  entity: 'collection',
+                  field: 'identityProperty'
+                }
+              },
+              $value: {
+                type: 'string',
+                reference: {
+                  field: ''
+                }
+              }
+            },
+            origin: '#/properties/stringProperty/items'
+          },
+          'collection/enumProperty[@]': {
+            fields: {
+              '$collection~identityProperty': {
+                type: 'integer',
+                identity: true,
+                reference: {
+                  entity: 'collection',
+                  field: 'identityProperty',
+                  depth: 2
+                },
+                relation: {
+                  entity: 'collection',
+                  field: 'identityProperty'
+                }
+              },
+              $value: {
+                type: 'enum',
+                enum: ['option1', 'option2'],
+                reference: {
+                  field: ''
+                }
+              }
+            },
+            origin: '#/properties/enumProperty/items'
+          },
+          'collection/objectProperty[@]': {
+            fields: {
+              '$collection~identityProperty': {
+                type: 'integer',
+                identity: true,
+                reference: {
+                  entity: 'collection',
+                  field: 'identityProperty',
+                  depth: 2
+                },
+                relation: {
+                  entity: 'collection',
+                  field: 'identityProperty'
+                }
+              },
+              $value: {
+                type: 'json',
+                reference: {
+                  field: ''
+                }
+              }
+            },
+            origin: '#/properties/objectProperty/items'
+          }
+        })
+    })
+
     it('flattens schema with nullable complex property', () => {
       const jsonSchema = {
         type: 'object',
@@ -259,7 +441,7 @@ describe('SchemaFlatter', () => {
               '$collection~id': {
                 identity: true,
                 reference: {
-                  depth: 1,
+                  depth: 2,
                   entity: 'collection',
                   field: 'id'
                 },
@@ -270,18 +452,13 @@ describe('SchemaFlatter', () => {
                 type: 'integer'
               },
               $value: {
-                type: 'integer'
+                type: 'integer',
+                reference: {
+                  field: ''
+                }
               }
             },
-            origin: '#/properties/array/items',
-            customSchema: {
-              properties: {
-                $value: {
-                  type: 'integer'
-                }
-              },
-              type: 'object'
-            }
+            origin: '#/properties/array/items'
           }
         })
     })
@@ -326,7 +503,7 @@ describe('SchemaFlatter', () => {
               '$collection~id': {
                 identity: true,
                 reference: {
-                  depth: 1,
+                  depth: 2,
                   entity: 'collection',
                   field: 'id'
                 },
@@ -336,19 +513,14 @@ describe('SchemaFlatter', () => {
                 },
                 type: 'integer'
               },
-              '$value': {
-                type: 'integer'
+              $value: {
+                type: 'integer',
+                reference: {
+                  field: ''
+                }
               }
             },
-            origin: '#/definitions/item',
-            'customSchema': {
-              'properties': {
-                '$value': {
-                  type: 'integer'
-                }
-              },
-              type: 'object'
-            }
+            origin: '#/definitions/item'
           }
         })
     })
@@ -388,7 +560,7 @@ describe('SchemaFlatter', () => {
               '$collection~id': {
                 identity: true,
                 reference: {
-                  depth: 1,
+                  depth: 2,
                   entity: 'collection',
                   field: 'id'
                 },
@@ -399,18 +571,13 @@ describe('SchemaFlatter', () => {
                 type: 'integer'
               },
               $value: {
-                type: 'integer'
+                type: 'integer',
+                reference: {
+                  field: ''
+                }
               }
             },
-            origin: '#/properties/array/items',
-            customSchema: {
-              properties: {
-                $value: {
-                  type: 'integer'
-                }
-              },
-              type: 'object'
-            }
+            origin: '#/properties/array/items'
           }
         })
     })
@@ -455,7 +622,7 @@ describe('SchemaFlatter', () => {
               '$collection~id': {
                 identity: true,
                 reference: {
-                  depth: 1,
+                  depth: 2,
                   entity: 'collection',
                   field: 'id'
                 },
@@ -519,7 +686,7 @@ describe('SchemaFlatter', () => {
               '$collection~id': {
                 identity: true,
                 reference: {
-                  depth: 1,
+                  depth: 2,
                   entity: 'collection',
                   field: 'id'
                 },
@@ -538,7 +705,7 @@ describe('SchemaFlatter', () => {
         })
     })
 
-    it('throws when flattens schema with tuple-aray', () => {
+    it('throws when flattens schema with tuple-array', () => {
       const jsonSchema = {
         type: 'object',
         properties: {
@@ -641,7 +808,7 @@ describe('SchemaFlatter', () => {
       const jsonSchema = {
         type: 'object',
         properties: {
-          simpleProperty: {
+          id: {
             type: 'integer'
           },
           complexObject: {
@@ -649,13 +816,13 @@ describe('SchemaFlatter', () => {
             additionalProperties: true
           }
         },
-        required: ['simpleProperty']
+        required: ['id']
       }
       new SchemaFlatter().flatten(jsonSchema, 'collection')
         .should.be.deep.equal({
           collection: {
             fields: {
-              simpleProperty: {
+              id: {
                 identity: true,
                 type: 'integer'
               }
@@ -667,16 +834,16 @@ describe('SchemaFlatter', () => {
           },
           'collection/complexObject': {
             fields: {
-              '$collection~simpleProperty': {
+              '$collection~id': {
                 identity: true,
                 reference: {
                   depth: 1,
                   entity: 'collection',
-                  field: 'simpleProperty'
+                  field: 'id'
                 },
                 relation: {
                   entity: 'collection',
-                  field: 'simpleProperty'
+                  field: 'id'
                 },
                 type: 'integer'
               }
@@ -687,39 +854,33 @@ describe('SchemaFlatter', () => {
             }
           },
           'collection/complexObject[@0]': {
-            customSchema: {
-              properties: {
-                $property: {
-                  type: 'string'
-                },
-                $value: {
-                  type: ['object', 'null']
-                }
-              },
-              required: ['$property'],
-              type: 'object'
-            },
             fields: {
-              '$collection~simpleProperty': {
+              '$collection~id': {
                 identity: true,
                 reference: {
                   depth: 2,
                   entity: 'collection',
-                  field: 'simpleProperty'
+                  field: 'id'
                 },
                 relation: {
                   entity: 'collection/complexObject',
-                  field: '$collection~simpleProperty'
+                  field: '$collection~id'
                 },
                 type: 'integer'
               },
               $property: {
                 identity: true,
-                type: 'string'
+                type: 'string',
+                reference: {
+                  fieldName: true
+                }
               },
               $value: {
                 nullable: true,
-                type: 'json'
+                type: 'json',
+                reference: {
+                  field: ''
+                }
               }
             },
             origin: '#/properties/complexObject/additionalProperties'
@@ -779,18 +940,6 @@ describe('SchemaFlatter', () => {
             }
           },
           'collection/complexObject[@0]': {
-            customSchema: {
-              properties: {
-                $property: {
-                  type: 'string'
-                },
-                $value: {
-                  type: 'integer'
-                }
-              },
-              required: ['$property'],
-              type: 'object'
-            },
             fields: {
               '$collection~simpleProperty': {
                 identity: true,
@@ -807,10 +956,16 @@ describe('SchemaFlatter', () => {
               },
               $property: {
                 identity: true,
-                type: 'string'
+                type: 'string',
+                reference: {
+                  fieldName: true
+                }
               },
               $value: {
-                type: 'integer'
+                type: 'integer',
+                reference: {
+                  field: ''
+                }
               }
             },
             origin: '#/properties/complexObject/additionalProperties'
@@ -875,18 +1030,6 @@ describe('SchemaFlatter', () => {
             }
           },
           'collection/complexObject[@0]': {
-            customSchema: {
-              properties: {
-                $property: {
-                  type: 'string'
-                },
-                otherValue: {
-                  type: 'integer'
-                }
-              },
-              required: ['$property'],
-              type: 'object'
-            },
             fields: {
               '$collection~simpleProperty': {
                 identity: true,
@@ -903,7 +1046,10 @@ describe('SchemaFlatter', () => {
               },
               $property: {
                 identity: true,
-                type: 'string'
+                type: 'string',
+                reference: {
+                  fieldName: true
+                }
               },
               otherValue: {
                 type: 'integer'
@@ -968,18 +1114,6 @@ describe('SchemaFlatter', () => {
             }
           },
           'collection/complexObject[@0]': {
-            customSchema: {
-              properties: {
-                $property: {
-                  type: 'string'
-                },
-                $value: {
-                  type: 'integer'
-                }
-              },
-              required: ['$property'],
-              type: 'object'
-            },
             fields: {
               '$collection~simpleProperty': {
                 identity: true,
@@ -996,10 +1130,16 @@ describe('SchemaFlatter', () => {
               },
               $property: {
                 identity: true,
-                type: 'string'
+                type: 'string',
+                reference: {
+                  fieldName: true
+                }
               },
               $value: {
-                type: 'integer'
+                type: 'integer',
+                reference: {
+                  field: ''
+                }
               }
             },
             origin: '#/properties/complexObject/patternProperties/^.*$'
@@ -1066,18 +1206,6 @@ describe('SchemaFlatter', () => {
             }
           },
           'collection/complexObject[@0]': {
-            customSchema: {
-              properties: {
-                $property: {
-                  type: 'string'
-                },
-                otherValue: {
-                  type: 'integer'
-                }
-              },
-              required: ['$property'],
-              type: 'object'
-            },
             fields: {
               '$collection~simpleProperty': {
                 identity: true,
@@ -1094,7 +1222,10 @@ describe('SchemaFlatter', () => {
               },
               $property: {
                 identity: true,
-                type: 'string'
+                type: 'string',
+                reference: {
+                  fieldName: true
+                }
               },
               otherValue: {
                 type: 'integer'
