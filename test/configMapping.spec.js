@@ -20,6 +20,17 @@ describe('ConfigMapping', () => {
   })
 
   describe('#extended()', () => {
+    it('has default parameters', () => {
+      (() => new ConfigMapping().extended())
+        .should.not.throw()
+    })
+
+    it('clones other instance', () => {
+      new ConfigMapping()
+        .remap('property', (value) => {})
+        .extended()
+        .should.have.property('property')
+    })
   })
 
   describe('#remap()', () => {
