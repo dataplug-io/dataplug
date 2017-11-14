@@ -162,13 +162,37 @@ describe('ReadableSequence', () => {
     let data = ''
     new Promise((resolve, reject) => sequence
         .on('end', () => resolve(data))
-        .on('error', reject)
+        .on('error', (error) => {
+          error.should.be.equal('expected')
+        })
         .on('data', (chunk) => { data += chunk }))
       .should.eventually.be.equal('12')
       .notify(done)
 
     sequence.once('data', () => {
       stream1.emit('error', 'expected')
+      stream1.end()
+    })
+    stream1.write('1')
+    stream2.write('2')
+    stream2.end()
+  })
+
+  it('supports underlying error (intolerant)', (done) => {
+    const stream1 = new PassThrough()
+    const stream2 = new PassThrough()
+    const sequence = new ReadableSequence([stream1, stream2], false, true)
+    let data = ''
+    new Promise((resolve, reject) => sequence
+        .on('end', () => resolve(data))
+        .on('error', reject)
+        .on('data', (chunk) => { data += chunk }))
+      .should.eventually.be.rejectedWith(/expected/)
+      .notify(done)
+
+    sequence.once('data', () => {
+      stream1.emit('error', 'expected')
+      stream1.end()
     })
     stream1.write('1')
     stream2.write('2')
