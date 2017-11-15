@@ -4,11 +4,11 @@ require('chai')
   .should()
 const { PassThrough } = require('stream')
 const logger = require('winston')
-const { Replicator, Source, Target } = require('../lib')
+const { ReplicationChainBuilder, Source, Target } = require('../lib')
 
 logger.clear()
 
-describe('Replicator', () => {
+describe('ReplicationChainBuilder', () => {
   it('replicates data', (done) => {
     const sourceStream = new PassThrough({
       objectMode: true
@@ -23,8 +23,9 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
+    new ReplicationChainBuilder()
+      .from(source, {}, chain => chain
+        .to(target, {}))
       .replicate()
       .then(() => {
         return data
@@ -54,8 +55,9 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
+    new ReplicationChainBuilder()
+      .from(source, {}, chain => chain
+        .to(target, {}))
       .replicate()
       .then(() => {
         return data
@@ -85,8 +87,9 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
+    new ReplicationChainBuilder()
+      .from(source, {}, chain => chain
+        .to(target, {}))
       .replicate()
       .then(() => {
         return data
@@ -116,8 +119,9 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
+    new ReplicationChainBuilder()
+      .from(source, {}, chain => chain
+        .to(target, {}))
       .replicate()
       .then(() => {
         return data
@@ -151,9 +155,47 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .via(transform)
-      .to(target, {})
+    new ReplicationChainBuilder()
+      .from(source, {}, chain => chain
+        .via(transform)
+        .to(target, {}))
+      .replicate()
+      .then(() => {
+        return data
+      })
+      .should.eventually.be.deep.equal([
+        { property: 'valueA' },
+        { property: 'valueB' }
+      ])
+      .and.notify(done)
+
+    sourceStream.write({ property: 'valueA' })
+    sourceStream.write({ property: 'valueB' })
+    sourceStream.end()
+  })
+
+  it('replicates data with transform (2)', (done) => {
+    const sourceStream = new PassThrough({
+      objectMode: true
+    })
+    const source = new Source({}, () => sourceStream)
+
+    const targetStream = new PassThrough({
+      objectMode: true
+    })
+    const target = new Target({}, () => targetStream)
+
+    const transform = new PassThrough({
+      objectMode: true
+    })
+
+    let data = []
+    targetStream
+      .on('data', (chunk) => data.push(chunk))
+    new ReplicationChainBuilder()
+      .from(source, {})
+      .via(transform, chain => chain
+        .to(target, {}))
       .replicate()
       .then(() => {
         return data
@@ -183,7 +225,8 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
+    new ReplicationChainBuilder()
+      .from(source, {})
       .to(target, {})
       .replicate(false)
       .then(() => {
@@ -217,7 +260,8 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
+    new ReplicationChainBuilder()
+      .from(source, {})
       .to(target, {})
       .replicate(true)
       .catch((error) => {

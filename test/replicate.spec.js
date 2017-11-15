@@ -4,11 +4,11 @@ require('chai')
   .should()
 const { PassThrough } = require('stream')
 const logger = require('winston')
-const { Replicator, Source, Target } = require('../lib')
+const { replicate, Source, Target } = require('../lib')
 
 logger.clear()
 
-describe('Replicator', () => {
+describe('replicate()', () => {
   it('replicates data', (done) => {
     const sourceStream = new PassThrough({
       objectMode: true
@@ -23,9 +23,7 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate()
+    replicate([ source.createOutput({}), target.createInput({}) ])
       .then(() => {
         return data
       })
@@ -54,9 +52,7 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate()
+    replicate([ source.createOutput({}), target.createInput({}) ])
       .then(() => {
         return data
       })
@@ -85,9 +81,7 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate()
+    replicate([ source.createOutput({}), target.createInput({}) ])
       .then(() => {
         return data
       })
@@ -116,9 +110,7 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate()
+    replicate([ source.createOutput({}), target.createInput({}) ])
       .then(() => {
         return data
       })
@@ -151,10 +143,7 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .via(transform)
-      .to(target, {})
-      .replicate()
+    replicate([ source.createOutput({}), transform, target.createInput({}) ])
       .then(() => {
         return data
       })
@@ -183,9 +172,7 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate(false)
+    replicate([ source.createOutput({}), target.createInput({}) ], false)
       .then(() => {
         return data
       })
@@ -217,9 +204,7 @@ describe('Replicator', () => {
     let data = []
     targetStream
       .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate(true)
+    replicate([ source.createOutput({}), target.createInput({}) ], true)
       .catch((error) => {
         error
           .should.be.equal('expected')

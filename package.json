@@ -30,7 +30,6 @@
     "bluebird": "^3.5.1",
     "check-types": "^7.3.0",
     "lodash": "^4.17.4",
-    "oboe": "^2.1.4",
     "winston": "^2.4.0"
   },
   "devDependencies": {
