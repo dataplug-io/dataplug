@@ -28,48 +28,74 @@ describe('Filter', () => {
   })
 
   it('handles immediate exceptions', (done) => {
-    const object = {
-      property: 'value'
+    const goodObject = {
+      property: 'good'
+    }
+    const badObject = {
+      property: 'bad'
     }
 
     const stream = new PassThrough({ objectMode: true })
-    const filter = new Filter(() => {
-      throw new Error('Unexpected error')
+    const filter = new Filter((object) => {
+      if (object.property === 'bad') {
+        throw new Error('expected')
+      }
+      return true
     })
-    let data = []
-    new Promise((resolve, reject) => filter
+    new Promise((resolve, reject) => {
+      let data = []
+      filter
         .on('end', () => resolve(data))
         .on('error', reject)
-        .on('data', (chunk) => data.push(chunk)))
-      .should.eventually.be.deep.equal([])
+        .on('data', (chunk) => data.push(chunk))
+    })
+      .should.eventually.be.deep.equal([
+        goodObject,
+        goodObject
+      ])
       .notify(done)
 
     stream
       .pipe(filter)
-    stream.write(object)
+    stream.write(goodObject)
+    stream.write(badObject)
+    stream.write(goodObject)
     stream.end()
   })
 
   it('handles future exceptions', (done) => {
-    const object = {
-      property: 'value'
+    const goodObject = {
+      property: 'good'
+    }
+    const badObject = {
+      property: 'bad'
     }
 
     const stream = new PassThrough({ objectMode: true })
-    const filter = new Filter(async () => {
-      throw new Error('Unexpected error')
+    const filter = new Filter(async (object) => {
+      if (object.property === 'bad') {
+        throw new Error('expected')
+      }
+      return true
     })
-    let data = []
-    new Promise((resolve, reject) => filter
+    new Promise((resolve, reject) => {
+      let data = []
+      filter
         .on('end', () => resolve(data))
         .on('error', reject)
-        .on('data', (chunk) => data.push(chunk)))
-      .should.eventually.be.deep.equal([])
+        .on('data', (chunk) => data.push(chunk))
+    })
+      .should.eventually.be.deep.equal([
+        goodObject,
+        goodObject
+      ])
       .notify(done)
 
     stream
       .pipe(filter)
-    stream.write(object)
+    stream.write(goodObject)
+    stream.write(badObject)
+    stream.write(goodObject)
     stream.end()
   })
 

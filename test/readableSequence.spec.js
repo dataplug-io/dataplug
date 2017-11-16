@@ -138,7 +138,7 @@ describe('ReadableSequence', () => {
 
   it('supports underlying error', (done) => {
     const stream = new PassThrough()
-    const sequence = new ReadableSequence([stream])
+    const sequence = new ReadableSequence([stream], false, true)
     new Promise((resolve, reject) => sequence
         .on('end', () => {
           reject(new Error())

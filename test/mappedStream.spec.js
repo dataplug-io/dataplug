@@ -90,7 +90,7 @@ describe('MappedStream', () => {
     const stream = new PassThrough({ objectMode: true })
     const mappedStream = new MappedStream(() => {
       throw new Error('expected')
-    })
+    }, true, true, true)
     new Promise((resolve, reject) => mappedStream
         .on('end', resolve)
         .on('error', reject)
@@ -112,7 +112,7 @@ describe('MappedStream', () => {
     const stream = new PassThrough({ objectMode: true })
     const mappedStream = new MappedStream(async () => {
       throw new Error('expected')
-    })
+    }, true, true, true)
     new Promise((resolve, reject) => mappedStream
         .on('end', resolve)
         .on('error', reject)
