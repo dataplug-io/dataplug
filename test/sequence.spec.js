@@ -5,15 +5,15 @@ require('chai')
 const { PassThrough } = require('stream')
 const Promise = require('bluebird')
 const logger = require('winston')
-const { ReadableSequence } = require('../lib')
+const { Sequence } = require('../lib')
 
 logger.clear()
 
-describe('ReadableSequence', () => {
+describe('Sequence', () => {
   it('supports array of streams', (done) => {
     const stream1 = new PassThrough()
     const stream2 = new PassThrough()
-    const sequence = new ReadableSequence([stream1, stream2])
+    const sequence = new Sequence([stream1, stream2])
     let data = ''
     new Promise((resolve, reject) => sequence
         .on('end', () => resolve(data))
@@ -32,7 +32,7 @@ describe('ReadableSequence', () => {
   it('supports functor', (done) => {
     const stream1 = new PassThrough()
     const stream2 = new PassThrough()
-    const sequence = new ReadableSequence((oldStream, oldContext) => {
+    const sequence = new Sequence((oldStream, oldContext) => {
       if (oldStream === null) {
         return stream1
       }
@@ -60,7 +60,7 @@ describe('ReadableSequence', () => {
   it('supports async functor', (done) => {
     const stream1 = new PassThrough()
     const stream2 = new PassThrough()
-    const sequence = new ReadableSequence(async (oldStream, oldContext) => {
+    const sequence = new Sequence(async (oldStream, oldContext) => {
       if (oldStream === null) {
         return stream1
       }
@@ -86,7 +86,39 @@ describe('ReadableSequence', () => {
   })
 
   it('handles errors', (done) => {
-    const sequence = new ReadableSequence(async (oldStream, oldContext) => {
+    const stream1 = new PassThrough()
+    const stream2 = new PassThrough()
+    const sequence = new Sequence(async (oldStream, oldContext) => {
+      if (oldStream === null) {
+        setTimeout(() => {
+          stream1.write('1')
+          stream1.emit('error', new Error('expected'))
+          stream1.write('!')
+        }, 25)
+        return stream1
+      }
+      if (oldStream === stream1) {
+        setTimeout(() => {
+          stream2.write('2')
+          stream2.emit('error', new Error('expected'))
+          stream2.write('!')
+        }, 25)
+        return stream2
+      }
+      return null
+    })
+
+    let data = ''
+    new Promise((resolve, reject) => sequence
+        .on('end', () => resolve(data))
+        .on('error', reject)
+        .on('data', (chunk) => { data += chunk }))
+      .should.eventually.be.equal('12')
+      .notify(done)
+  })
+
+  it('handles exceptions', (done) => {
+    const sequence = new Sequence((oldStream, oldContext) => {
       throw new Error('expected')
     })
 
@@ -95,14 +127,28 @@ describe('ReadableSequence', () => {
         .on('end', () => resolve(data))
         .on('error', reject)
         .on('data', (chunk) => { data += chunk }))
-      .should.eventually.be.rejectedWith(/expected/)
+      .should.eventually.be.equal('')
+      .notify(done)
+  })
+
+  it('handles async exceptions', (done) => {
+    const sequence = new Sequence(async (oldStream, oldContext) => {
+      throw new Error('expected')
+    })
+
+    let data = ''
+    new Promise((resolve, reject) => sequence
+        .on('end', () => resolve(data))
+        .on('error', reject)
+        .on('data', (chunk) => { data += chunk }))
+      .should.eventually.be.equal('')
       .notify(done)
   })
 
   it('supports destroy', (done) => {
     const stream1 = new PassThrough()
     const stream2 = new PassThrough()
-    const sequence = new ReadableSequence([stream1, stream2])
+    const sequence = new Sequence([stream1, stream2])
     let data = ''
     new Promise((resolve, reject) => sequence
         .on('end', () => resolve(data))
@@ -119,7 +165,7 @@ describe('ReadableSequence', () => {
   it('handles underlying destroy', (done) => {
     const stream1 = new PassThrough()
     const stream2 = new PassThrough()
-    const sequence = new ReadableSequence([stream1, stream2])
+    const sequence = new Sequence([stream1, stream2])
     let data = ''
     new Promise((resolve, reject) => sequence
         .on('end', () => resolve(data))
@@ -138,7 +184,7 @@ describe('ReadableSequence', () => {
 
   it('supports underlying error', (done) => {
     const stream = new PassThrough()
-    const sequence = new ReadableSequence([stream], false, true)
+    const sequence = new Sequence([stream], { abortOnError: true })
     new Promise((resolve, reject) => sequence
         .on('end', () => {
           reject(new Error())
@@ -158,7 +204,7 @@ describe('ReadableSequence', () => {
   it('supports underlying error (tolerant)', (done) => {
     const stream1 = new PassThrough()
     const stream2 = new PassThrough()
-    const sequence = new ReadableSequence([stream1, stream2], false, false)
+    const sequence = new Sequence([stream1, stream2], { abortOnError: false })
     let data = ''
     new Promise((resolve, reject) => sequence
         .on('end', () => resolve(data))
@@ -181,7 +227,7 @@ describe('ReadableSequence', () => {
   it('supports underlying error (intolerant)', (done) => {
     const stream1 = new PassThrough()
     const stream2 = new PassThrough()
-    const sequence = new ReadableSequence([stream1, stream2], false, true)
+    const sequence = new Sequence([stream1, stream2], { abortOnError: true })
     let data = ''
     new Promise((resolve, reject) => sequence
         .on('end', () => resolve(data))

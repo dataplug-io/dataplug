@@ -34,9 +34,9 @@ describe('dataplug', () => {
       .that.is.an('function')
   })
 
-  it('has "MappedStream" class', () => {
+  it('has "Mapper" class', () => {
     dataplug
-      .should.have.property('MappedStream')
+      .should.have.property('Mapper')
       .that.is.an('function')
   })
 
@@ -58,9 +58,9 @@ describe('dataplug', () => {
       .that.is.an('function')
   })
 
-  it('has "ReadableSequence" class', () => {
+  it('has "Sequence" class', () => {
     dataplug
-      .should.have.property('ReadableSequence')
+      .should.have.property('Sequence')
       .that.is.an('function')
   })
 
