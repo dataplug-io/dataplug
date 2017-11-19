@@ -4,17 +4,20 @@ require('chai')
   .should()
 const { PassThrough } = require('stream')
 const Promise = require('bluebird')
-const { Filter } = require('../lib')
+const logger = require('winston')
+const { Scanner } = require('../lib')
 
-describe('Filter', () => {
+logger.clear()
+
+describe('Scanner', () => {
   it('passes through objects', (done) => {
     const object = {
       property: 'value'
     }
 
     const stream = new PassThrough({ objectMode: true })
-    const filter = new Filter(() => true)
-    new Promise((resolve, reject) => filter
+    const scanner = new Scanner(() => {})
+    new Promise((resolve, reject) => scanner
         .on('end', resolve)
         .on('error', reject)
         .on('data', resolve))
@@ -22,7 +25,7 @@ describe('Filter', () => {
       .notify(done)
 
     stream
-      .pipe(filter)
+      .pipe(scanner)
     stream.write(object)
     stream.end()
   })
@@ -36,7 +39,7 @@ describe('Filter', () => {
     }
 
     const stream = new PassThrough({ objectMode: true })
-    const filter = new Filter((object) => {
+    const scanner = new Scanner((object) => {
       if (object.property === 'bad') {
         throw new Error('expected')
       }
@@ -44,19 +47,20 @@ describe('Filter', () => {
     })
     new Promise((resolve, reject) => {
       let data = []
-      filter
+      scanner
         .on('end', () => resolve(data))
         .on('error', reject)
         .on('data', (chunk) => data.push(chunk))
     })
       .should.eventually.be.deep.equal([
         goodObject,
+        badObject,
         goodObject
       ])
       .notify(done)
 
     stream
-      .pipe(filter)
+      .pipe(scanner)
     stream.write(goodObject)
     stream.write(badObject)
     stream.write(goodObject)
@@ -72,7 +76,7 @@ describe('Filter', () => {
     }
 
     const stream = new PassThrough({ objectMode: true })
-    const filter = new Filter(async (object) => {
+    const scanner = new Scanner(async (object) => {
       if (object.property === 'bad') {
         throw new Error('expected')
       }
@@ -80,37 +84,38 @@ describe('Filter', () => {
     })
     new Promise((resolve, reject) => {
       let data = []
-      filter
+      scanner
         .on('end', () => resolve(data))
         .on('error', reject)
         .on('data', (chunk) => data.push(chunk))
     })
       .should.eventually.be.deep.equal([
         goodObject,
+        badObject,
         goodObject
       ])
       .notify(done)
 
     stream
-      .pipe(filter)
+      .pipe(scanner)
     stream.write(goodObject)
     stream.write(badObject)
     stream.write(goodObject)
     stream.end()
   })
 
-  it('handles async filter callback correctly', (done) => {
+  it('handles async scanner callback correctly', (done) => {
     const object = {
       property: 'value'
     }
 
     const stream = new PassThrough({ objectMode: true })
-    const filter = new Filter(async () => new Promise((resolve) => {
+    const scanner = new Scanner(async () => new Promise((resolve) => {
       setTimeout(() => {
         resolve(true)
       }, 25)
     }))
-    new Promise((resolve, reject) => filter
+    new Promise((resolve, reject) => scanner
         .on('end', resolve)
         .on('error', reject)
         .on('data', resolve))
@@ -118,7 +123,7 @@ describe('Filter', () => {
       .notify(done)
 
     stream
-      .pipe(filter)
+      .pipe(scanner)
     stream.write(object)
     stream.end()
   })

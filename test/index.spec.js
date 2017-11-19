@@ -22,6 +22,12 @@ describe('dataplug', () => {
       .that.is.an('function')
   })
 
+  it('has "Counter" class', () => {
+    dataplug
+      .should.have.property('Counter')
+      .that.is.an('function')
+  })
+
   it('has "Filter" class', () => {
     dataplug
       .should.have.property('Filter')
