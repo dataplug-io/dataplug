@@ -169,40 +169,6 @@ describe('Replicator', () => {
     sourceStream.end()
   })
 
-  it('handles error in source without stopping', (done) => {
-    const sourceStream = new PassThrough({
-      objectMode: true
-    })
-    const source = new Source({}, () => sourceStream)
-
-    const targetStream = new PassThrough({
-      objectMode: true
-    })
-    const target = new Target({}, () => targetStream)
-
-    let data = []
-    targetStream
-      .on('data', (chunk) => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate(false)
-      .then(() => {
-        return data
-      })
-      .should.eventually.be.deep.equal([
-        { property: 'valueA' },
-        { property: 'valueB' }
-      ])
-      .and.notify(done)
-    targetStream.once('data', () => {
-      sourceStream.emit('error', 'expected')
-    })
-
-    sourceStream.write({ property: 'valueA' })
-    sourceStream.write({ property: 'valueB' })
-    sourceStream.end()
-  })
-
   it('handles error in source with stopping', (done) => {
     const sourceStream = new PassThrough({
       objectMode: true
@@ -219,7 +185,7 @@ describe('Replicator', () => {
       .on('data', (chunk) => data.push(chunk))
     new Replicator(source, {})
       .to(target, {})
-      .replicate(true)
+      .replicate()
       .catch((error) => {
         error
           .should.be.equal('expected')
