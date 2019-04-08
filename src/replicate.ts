@@ -1,3 +1,6 @@
+// Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
+// License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
 import { last, first, forEach, flatten, isFunction } from 'lodash'
 import check from 'check-types'
 import { Promise as BluebirdPromise } from 'bluebird'
