@@ -2,7 +2,7 @@
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import { forOwn, forEach, without, cloneDeep, find } from 'lodash'
-import { ConfigDeclarationParameter } from './сonfigDeclarationParameter'
+import { ConfigDeclarationParameter } from './configDeclarationParameter'
 import { ConfigDeclarationJsonSchema } from './configDeclarationJsonSchema'
 
 /**
