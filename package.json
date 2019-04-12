@@ -13,7 +13,7 @@
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest",
     "coverage": "jest --coverage",
-    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
     "preversion": "npm run lint && npm run test",
     "postversion": "git push && git push --tags"
   },
@@ -28,10 +28,6 @@
   "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/dataplug-io/dataplug/issues"
-  },
-  "jest": {
-    "collectCoverage": true,
-    "collectDirectory": "./tests/coverage/lcov.info"
   },
   "homepage": "https://github.com/dataplug-io/dataplug#readme",
   "dependencies": {

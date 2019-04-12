@@ -1,7 +1,8 @@
 module.exports = {
   preset: 'ts-jest',
-  setupFiles: [ './testSetup/globalSetup.ts' ],
+  setupFiles: [
+    './test/setup/winston.ts'
+  ],
   clearMocks: true,
-  coverageDirectory: 'tests/coverage',
   testEnvironment: 'node',
-};
+}

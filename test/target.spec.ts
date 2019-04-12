@@ -1,9 +1,9 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import 'ts-jest'
 import { PassThrough } from 'stream'
 import Target from '../src/target'
-import 'ts-jest'
 
 describe('Target', () => {
   it('supports instantly-available stream', done => {

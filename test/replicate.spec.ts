@@ -1,11 +1,11 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
+import 'ts-jest'
 import { PassThrough } from 'stream'
 import Source from '../src/source'
 import Target from '../src/target'
 import replicate from '../src/replicate'
-import 'ts-jest'
 
 describe('replicate()', () => {
   it('replicates data', done => {
