@@ -1,18 +1,11 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import 'mocha'
-import chai from 'chai'
-import chaiAsPromised from 'chai-as-promised'
 import { PassThrough } from 'stream'
-import * as logger from 'winston'
 import Target from '../src/target'
 import Source from '../src/source'
 import Replicator from '../src/replicator'
-
-chai.use(chaiAsPromised)
-chai.should()
-logger.clear()
+import 'ts-jest'
 
 describe('Replicator', () => {
   it('replicates data', done => {
@@ -28,17 +21,16 @@ describe('Replicator', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate()
-      .then(() => {
-        return data
-      })
-      .should.eventually.be.deep.equal([
-        { property: 'valueA' },
-        { property: 'valueB' },
-      ])
-      .and.notify(done)
+    expect(
+      new Replicator(source, {})
+        .to(target, {})
+        .replicate()
+        .then(() => {
+          return data
+        }),
+    )
+      .resolves.toMatchObject([{ property: 'valueA' }, { property: 'valueB' }])
+      .then(done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })
@@ -58,17 +50,16 @@ describe('Replicator', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate()
-      .then(() => {
-        return data
-      })
-      .should.eventually.be.deep.equal([
-        { property: 'valueA' },
-        { property: 'valueB' },
-      ])
-      .and.notify(done)
+    expect(
+      new Replicator(source, {})
+        .to(target, {})
+        .replicate()
+        .then(() => {
+          return data
+        }),
+    )
+      .resolves.toMatchObject([{ property: 'valueA' }, { property: 'valueB' }])
+      .then(done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })
@@ -88,17 +79,16 @@ describe('Replicator', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate()
-      .then(() => {
-        return data
-      })
-      .should.eventually.be.deep.equal([
-        { property: 'valueA' },
-        { property: 'valueB' },
-      ])
-      .and.notify(done)
+    expect(
+      new Replicator(source, {})
+        .to(target, {})
+        .replicate()
+        .then(() => {
+          return data
+        }),
+    )
+      .resolves.toMatchObject([{ property: 'valueA' }, { property: 'valueB' }])
+      .then(done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })
@@ -118,17 +108,16 @@ describe('Replicator', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate()
-      .then(() => {
-        return data
-      })
-      .should.eventually.be.deep.equal([
-        { property: 'valueA' },
-        { property: 'valueB' },
-      ])
-      .and.notify(done)
+    expect(
+      new Replicator(source, {})
+        .to(target, {})
+        .replicate()
+        .then(() => {
+          return data
+        }),
+    )
+      .resolves.toMatchObject([{ property: 'valueA' }, { property: 'valueB' }])
+      .then(done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })
@@ -152,18 +141,17 @@ describe('Replicator', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
-    new Replicator(source, {})
-      .via(transform)
-      .to(target, {})
-      .replicate()
-      .then(() => {
-        return data
-      })
-      .should.eventually.be.deep.equal([
-        { property: 'valueA' },
-        { property: 'valueB' },
-      ])
-      .and.notify(done)
+    expect(
+      new Replicator(source, {})
+        .via(transform)
+        .to(target, {})
+        .replicate()
+        .then(() => {
+          return data
+        }),
+    )
+      .resolves.toMatchObject([{ property: 'valueA' }, { property: 'valueB' }])
+      .then(done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })
@@ -183,12 +171,9 @@ describe('Replicator', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
-    new Replicator(source, {})
-      .to(target, {})
-      .replicate()
-      .catch((error: Error) => {
-        error.should.be.equal('expected')
-      })
+    expect(
+      new Replicator(source, {}).to(target, {}).replicate(),
+    ).rejects.toEqual('expected')
     targetStream.once('data', () => {
       sourceStream.emit('error', 'expected')
     })

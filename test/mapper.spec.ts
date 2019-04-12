@@ -1,17 +1,10 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import 'mocha'
-import chai from 'chai'
-import chaiAsPromised from 'chai-as-promised'
+import 'ts-jest'
 import { Promise as BluebirdPromise } from 'bluebird'
 import { PassThrough } from 'stream'
-import * as logger from 'winston'
 import Mapper from '../src/mapper'
-
-chai.use(chaiAsPromised)
-chai.should()
-logger.clear()
 
 describe('Mapper', () => {
   it('maps input to streams', done => {
@@ -26,19 +19,21 @@ describe('Mapper', () => {
       }, 25)
       return stream
     })
-    new BluebirdPromise((resolve, reject) => {
-      let data = ''
-      mapper
-        .on('end', () => resolve(data))
-        .on('error', (error: Error) => {
-          reject(new Error(error + ':' + data))
-        })
-        .on('data', (chunk: any) => {
-          data += chunk
-        })
-    }).should.eventually.be
-      .equal('a1a2b1b2')
-      .notify(done)
+    expect(
+      new BluebirdPromise((resolve, reject) => {
+        let data = ''
+        mapper
+          .on('end', () => resolve(data))
+          .on('error', (error: Error) => {
+            reject(new Error(error + ':' + data))
+          })
+          .on('data', (chunk: any) => {
+            data += chunk
+          })
+      }),
+    )
+      .resolves.toEqual('a1a2b1b2')
+      .then(done)
 
     input.pipe(mapper)
     input.write('a')
@@ -58,19 +53,21 @@ describe('Mapper', () => {
       }, 25)
       return stream
     })
-    new BluebirdPromise((resolve, reject) => {
-      let data = ''
-      mapper
-        .on('end', () => resolve(data))
-        .on('error', error => {
-          reject(new Error(error + ':' + data))
-        })
-        .on('data', chunk => {
-          data += chunk
-        })
-    }).should.eventually.be
-      .equal('a1a2b1b2')
-      .notify(done)
+    expect(
+      new BluebirdPromise((resolve, reject) => {
+        let data = ''
+        mapper
+          .on('end', () => resolve(data))
+          .on('error', error => {
+            reject(new Error(error + ':' + data))
+          })
+          .on('data', chunk => {
+            data += chunk
+          })
+      }),
+    )
+      .resolves.toEqual('a1a2b1b2')
+      .then(done)
 
     input.pipe(mapper)
     input.write('a')
@@ -93,19 +90,21 @@ describe('Mapper', () => {
       }, 25)
       return stream
     })
-    new Promise((resolve, reject) => {
-      let data = ''
-      mapper
-        .on('end', () => resolve(data))
-        .on('error', error => {
-          reject(new Error(error + ':' + data))
-        })
-        .on('data', chunk => {
-          data += chunk
-        })
-    }).should.eventually.be
-      .equal('a1a2b1b2')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) => {
+        let data = ''
+        mapper
+          .on('end', () => resolve(data))
+          .on('error', error => {
+            reject(new Error(error + ':' + data))
+          })
+          .on('data', chunk => {
+            data += chunk
+          })
+      }),
+    )
+      .resolves.toEqual('a1a2b1b2')
+      .then(done)
 
     input.pipe(mapper)
     input.write('a')
@@ -129,19 +128,21 @@ describe('Mapper', () => {
       }, 25)
       return stream
     })
-    new Promise((resolve, reject) => {
-      let data = ''
-      mapper
-        .on('end', () => resolve(data))
-        .on('error', error => {
-          reject(new Error(error + ':' + data))
-        })
-        .on('data', chunk => {
-          data += chunk
-        })
-    }).should.eventually.be
-      .equal('a1a2b1b2')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) => {
+        let data = ''
+        mapper
+          .on('end', () => resolve(data))
+          .on('error', error => {
+            reject(new Error(error + ':' + data))
+          })
+          .on('data', chunk => {
+            data += chunk
+          })
+      }),
+    )
+      .resolves.toEqual('a1a2b1b2')
+      .then(done)
 
     input.pipe(mapper)
     input.write('a')
@@ -162,19 +163,21 @@ describe('Mapper', () => {
       }, 25)
       return stream
     })
-    new Promise((resolve, reject) => {
-      let data = ''
-      mapper
-        .on('end', () => resolve(data))
-        .on('error', error => {
-          reject(new Error(error + ':' + data))
-        })
-        .on('data', chunk => {
-          data += chunk
-        })
-    }).should.eventually.be
-      .equal('a1b1')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) => {
+        let data = ''
+        mapper
+          .on('end', () => resolve(data))
+          .on('error', error => {
+            reject(new Error(error + ':' + data))
+          })
+          .on('data', chunk => {
+            data += chunk
+          })
+      }),
+    )
+      .resolves.toEqual('a1b1')
+      .then(done)
 
     input.pipe(mapper)
     input.write('a')
@@ -197,19 +200,21 @@ describe('Mapper', () => {
       },
       { abortOnError: true },
     )
-    new Promise((resolve, reject) => {
-      let data = ''
-      mapper
-        .on('end', () => resolve(data))
-        .on('error', (error: Error) => {
-          reject(new Error(error + ':' + data))
-        })
-        .on('data', (chunk: any) => {
-          data += chunk
-        })
-    }).should.eventually.be
-      .rejectedWith('expected:a1')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) => {
+        let data = ''
+        mapper
+          .on('end', () => resolve(data))
+          .on('error', (error: Error) => {
+            reject(new Error(error + ':' + data))
+          })
+          .on('data', (chunk: any) => {
+            data += chunk
+          })
+      }),
+    )
+      .rejects.toThrow('Error: expected:a1')
+      .then(done)
 
     input.pipe(mapper)
     input.write('a')
@@ -232,20 +237,44 @@ describe('Mapper', () => {
       },
       { abortOnError: true },
     )
-    new Promise((resolve, reject) => {
-      let data = ''
-      mapper
-        .on('end', () => resolve(data))
-        .on('error', (error: Error) => {
-          reject(new Error(error + ':' + data))
-        })
-        .on('data', (chunk: any) => {
-          data += chunk
-          setImmediate(() => mapper.destroy())
-        })
-    }).should.eventually.be
-      .rejectedWith('expected:a1')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) => {
+        let data = ''
+        mapper
+          .on('end', () => resolve(data))
+          .on('error', (error: Error) => {
+            reject(new Error(error + ':' + data))
+          })
+          .on('data', (chunk: any) => {
+            data += chunk
+            setImmediate(() => mapper.destroy())
+          })
+      }),
+    )
+      .rejects.toThrow('Error: expected:a1')
+      .then(done)
+
+    input.pipe(mapper)
+    input.write('a')
+    input.write('b')
+    input.end()
+  })
+
+  it('error handling', done => {
+    const input = new PassThrough()
+    const mapper = new Mapper(
+      () => {
+        throw new Error('emulated error')
+      },
+      { abortOnError: true },
+    )
+    expect(
+      new Promise((resolve, reject) => {
+        mapper.on('end', resolve).on('error', reject)
+      }),
+    )
+      .rejects.toThrow('emulated error')
+      .then(done)
 
     input.pipe(mapper)
     input.write('a')

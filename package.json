@@ -11,9 +11,9 @@
     "format": "prettier --write \"src/**/*.ts\"",
     "docs": "typedoc --out ./docs ./src",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "test": "mocha -r ts-node/register ./test/*spec.ts",
-    "coverage": "nyc -r lcov -e .ts -x \"*.ts\" mocha -r ts-node/register test/*.spec.ts && nyc report --reporter=html --reporter=text",
-    "coveralls": "nyc -e .ts -x \"*.ts\" mocha -r ts-node/register test/*.spec.ts && nyc report --reporter=text-lcov | coveralls",
+    "test": "jest",
+    "coverage": "jest --coverage",
+    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
     "preversion": "npm run lint && npm run test",
     "postversion": "git push && git push --tags"
   },
@@ -29,6 +29,10 @@
   "bugs": {
     "url": "https://github.com/dataplug-io/dataplug/issues"
   },
+  "jest": {
+    "collectCoverage": true,
+    "collectDirectory": "./tests/coverage/lcov.info"
+  },
   "homepage": "https://github.com/dataplug-io/dataplug#readme",
   "dependencies": {
     "ajv": "^6.10.0",
@@ -39,21 +43,18 @@
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.26",
-    "@types/chai": "^4.1.7",
-    "@types/chai-as-promised": "^7.1.0",
     "@types/check-types": "^7.3.1",
+    "@types/jest": "^24.0.11",
     "@types/json-schema": "^7.0.3",
     "@types/lodash": "^4.14.123",
-    "@types/mocha": "^5.2.6",
-    "@types/node": "^11.13.0",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
+    "@types/node": "^11.13.4",
     "coveralls": "^3.0.3",
-    "mocha": "^6.1.1",
+    "jest": "^24.7.1",
     "nyc": "^13.3.0",
     "prettier": "^1.16.4",
     "rimraf": "^2.6.3",
     "standard": "^12.0.1",
+    "ts-jest": "^24.0.2",
     "ts-loader": "^5.3.3",
     "ts-node": "^8.0.3",
     "tsconfig-paths": "^3.8.0",
@@ -62,6 +63,6 @@
     "tslint-config-standard": "^8.0.1",
     "tslint-plugin-prettier": "^2.0.1",
     "typedoc": "^0.14.2",
-    "typescript": "^3.4.2"
+    "typescript": "^3.4.3"
   }
 }

@@ -1,17 +1,10 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import 'mocha'
-import chai from 'chai'
-import chaiAsPromised from 'chai-as-promised'
+import 'ts-jest'
 import { Promise as BluebirdPromise } from 'bluebird'
 import Filter from '../src/filter'
 import { PassThrough } from 'stream'
-import * as logger from 'winston'
-
-chai.use(chaiAsPromised)
-chai.should()
-logger.clear()
 
 describe('Filter', () => {
   it('passes through objects', done => {
@@ -21,14 +14,16 @@ describe('Filter', () => {
 
     const stream = new PassThrough({ objectMode: true })
     const filter = new Filter(() => true)
-    new BluebirdPromise((resolve, reject) =>
-      filter
-        .on('end', resolve)
-        .on('error', reject)
-        .on('data', resolve),
-    ).should.eventually.be.deep
-      .equal(object)
-      .notify(done)
+    expect(
+      new BluebirdPromise((resolve, reject) =>
+        filter
+          .on('end', resolve)
+          .on('error', reject)
+          .on('data', resolve),
+      ),
+    )
+      .resolves.toEqual(object)
+      .then(done)
 
     stream.pipe(filter)
     stream.write(object)
@@ -50,15 +45,17 @@ describe('Filter', () => {
       }
       return true
     })
-    new Promise((resolve, reject) => {
-      let data: any[] = []
-      filter
-        .on('end', () => resolve(data))
-        .on('error', reject)
-        .on('data', chunk => data.push(chunk))
-    }).should.eventually.be.deep
-      .equal([goodObject, goodObject])
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) => {
+        let data: any[] = []
+        filter
+          .on('end', () => resolve(data))
+          .on('error', reject)
+          .on('data', chunk => data.push(chunk))
+      }),
+    )
+      .resolves.toEqual([goodObject, goodObject])
+      .then(done)
 
     stream.pipe(filter)
     stream.write(goodObject)
@@ -82,15 +79,17 @@ describe('Filter', () => {
       }
       return true
     })
-    new Promise((resolve, reject) => {
-      let data: any[] = []
-      filter
-        .on('end', () => resolve(data))
-        .on('error', reject)
-        .on('data', chunk => data.push(chunk))
-    }).should.eventually.be.deep
-      .equal([goodObject, goodObject])
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) => {
+        let data: any[] = []
+        filter
+          .on('end', () => resolve(data))
+          .on('error', reject)
+          .on('data', chunk => data.push(chunk))
+      }),
+    )
+      .resolves.toEqual([goodObject, goodObject])
+      .then(done)
 
     stream.pipe(filter)
     stream.write(goodObject)
@@ -113,14 +112,16 @@ describe('Filter', () => {
           }, 25)
         }),
     )
-    new Promise((resolve, reject) =>
-      filter
-        .on('end', resolve)
-        .on('error', reject)
-        .on('data', resolve),
-    ).should.eventually.be.deep
-      .equal(object)
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        filter
+          .on('end', resolve)
+          .on('error', reject)
+          .on('data', resolve),
+      ),
+    )
+      .resolves.toEqual(object)
+      .then(done)
 
     stream.pipe(filter)
     stream.write(object)

@@ -71,17 +71,11 @@ export default class Mapper extends Transform {
         }
       })
       .then(stream => {
-        if (!stream) {
-          callback()
-          return
-        }
         this._stream = stream
         this._notifyTransformComplete = callback
         if (!this._stream) {
-          const errorMessage =
-            'Error in Mapper while creating stream: stream is null'
-          logger.log('error', errorMessage)
-          throw Error(errorMessage)
+          callback()
+          return
         }
         this._stream
           .on('end', this._onStreamEndHandler)

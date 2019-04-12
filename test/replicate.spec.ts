@@ -1,16 +1,11 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import 'mocha'
-import chai from 'chai'
-import chaiAsPromised from 'chai-as-promised'
 import { PassThrough } from 'stream'
 import Source from '../src/source'
 import Target from '../src/target'
 import replicate from '../src/replicate'
-
-chai.use(chaiAsPromised)
-chai.should()
+import 'ts-jest'
 
 describe('replicate()', () => {
   it('replicates data', done => {
@@ -26,15 +21,13 @@ describe('replicate()', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
-    replicate([source.createOutput({}), target.createInput({})])
-      .then(() => {
+    expect(
+      replicate([source.createOutput({}), target.createInput({})]).then(() => {
         return data
-      })
-      .should.eventually.be.deep.equal([
-        { property: 'valueA' },
-        { property: 'valueB' },
-      ])
-      .and.notify(done)
+      }),
+    )
+      .resolves.toMatchObject([{ property: 'valueA' }, { property: 'valueB' }])
+      .then(done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })
@@ -54,15 +47,13 @@ describe('replicate()', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
-    replicate([source.createOutput({}), target.createInput({})])
-      .then(() => {
+    expect(
+      replicate([source.createOutput({}), target.createInput({})]).then(() => {
         return data
-      })
-      .should.eventually.be.deep.equal([
-        { property: 'valueA' },
-        { property: 'valueB' },
-      ])
-      .and.notify(done)
+      }),
+    )
+      .resolves.toMatchObject([{ property: 'valueA' }, { property: 'valueB' }])
+      .then(done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })
@@ -82,15 +73,13 @@ describe('replicate()', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
-    replicate([source.createOutput({}), target.createInput({})])
-      .then(() => {
+    expect(
+      replicate([source.createOutput({}), target.createInput({})]).then(() => {
         return data
-      })
-      .should.eventually.be.deep.equal([
-        { property: 'valueA' },
-        { property: 'valueB' },
-      ])
-      .and.notify(done)
+      }),
+    )
+      .resolves.toMatchObject([{ property: 'valueA' }, { property: 'valueB' }])
+      .then(done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })
@@ -110,15 +99,13 @@ describe('replicate()', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
-    replicate([source.createOutput({}), target.createInput({})])
-      .then(() => {
+    expect(
+      replicate([source.createOutput({}), target.createInput({})]).then(() => {
         return data
-      })
-      .should.eventually.be.deep.equal([
-        { property: 'valueA' },
-        { property: 'valueB' },
-      ])
-      .and.notify(done)
+      }),
+    )
+      .resolves.toMatchObject([{ property: 'valueA' }, { property: 'valueB' }])
+      .then(done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })
@@ -142,15 +129,17 @@ describe('replicate()', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
-    replicate([source.createOutput({}), transform, target.createInput({})])
-      .then(() => {
+    expect(
+      replicate([
+        source.createOutput({}),
+        transform,
+        target.createInput({}),
+      ]).then(() => {
         return data
-      })
-      .should.eventually.be.deep.equal([
-        { property: 'valueA' },
-        { property: 'valueB' },
-      ])
-      .and.notify(done)
+      }),
+    )
+      .resolves.toMatchObject([{ property: 'valueA' }, { property: 'valueB' }])
+      .then(done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })
@@ -171,11 +160,10 @@ describe('replicate()', () => {
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
 
-    replicate([source.createOutput({}), target.createInput({})]).catch(
-      (error: Error) => {
-        error.should.be.equal('expected')
-      },
-    )
+    expect(
+      replicate([source.createOutput({}), target.createInput({})]),
+    ).rejects.toEqual('expected')
+
     targetStream.once('data', () => {
       sourceStream.emit('error', 'expected')
     })

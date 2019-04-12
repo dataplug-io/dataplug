@@ -1,87 +1,99 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import 'mocha'
-import chai from 'chai'
-chai.should()
+import 'ts-jest'
 import { dataplug } from '../src'
 
 describe('dataplug', () => {
   it('has "config" field', () => {
-    dataplug.should.have.property('config').that.is.an('object')
+    expect(dataplug).toHaveProperty('config')
+    expect(typeof dataplug.config).toBe('object')
   })
 
   it('has "ConfigDeclaration" class', () => {
-    dataplug.should.have.property('ConfigDeclaration').that.is.an('function')
+    expect(dataplug).toHaveProperty('ConfigDeclaration')
+    expect(typeof dataplug.ConfigDeclaration).toBe('function')
   })
 
   it('has "ConfigMapping" class', () => {
-    dataplug.should.have.property('ConfigMapping').that.is.an('function')
+    expect(dataplug).toHaveProperty('ConfigMapping')
+    expect(typeof dataplug.ConfigMapping).toBe('function')
   })
 
   it('has "Counter" class', () => {
-    dataplug.should.have.property('Counter').that.is.an('function')
+    expect(dataplug).toHaveProperty('Counter')
+    expect(typeof dataplug.Counter).toBe('function')
   })
 
   it('has "Filter" class', () => {
-    dataplug.should.have.property('Filter').that.is.an('function')
+    expect(dataplug).toHaveProperty('Filter')
+    expect(typeof dataplug.Filter).toBe('function')
   })
 
   it('has "JsonUtils" class', () => {
-    dataplug.should.have.property('JsonUtils').that.is.an('function')
+    expect(dataplug).toHaveProperty('JsonUtils')
+    expect(typeof dataplug.JsonUtils).toBe('function')
   })
 
   it('has "Mapper" class', () => {
-    dataplug.should.have.property('Mapper').that.is.an('function')
+    expect(dataplug).toHaveProperty('Mapper')
+    expect(typeof dataplug.Mapper).toBe('function')
   })
 
   it('has "replicate" function', () => {
-    dataplug.should.have.property('replicate').that.is.an('function')
+    expect(dataplug).toHaveProperty('replicate')
+    expect(typeof dataplug.replicate).toBe('function')
   })
 
   it('has "Replicator" class', () => {
-    dataplug.should.have.property('Replicator').that.is.an('function')
+    expect(dataplug).toHaveProperty('Replicator')
+    expect(typeof dataplug.Replicator).toBe('function')
   })
 
   it('has "ReplicationChainBuilder" class', () => {
-    dataplug.should.have
-      .property('ReplicationChainBuilder')
-      .that.is.an('function')
+    expect(dataplug).toHaveProperty('ReplicationChainBuilder')
+    expect(typeof dataplug.ReplicationChainBuilder).toBe('function')
   })
 
   it('has "Sequence" class', () => {
-    dataplug.should.have.property('Sequence').that.is.an('function')
+    expect(dataplug).toHaveProperty('Sequence')
+    expect(typeof dataplug.Sequence).toBe('function')
   })
 
   it('has "Scanner" class', () => {
-    dataplug.should.have.property('Scanner').that.is.an('function')
+    expect(dataplug).toHaveProperty('Scanner')
+    expect(typeof dataplug.Scanner).toBe('function')
   })
 
   it('has "source" function', () => {
-    dataplug.should.have.property('source').that.is.an('function')
+    expect(dataplug).toHaveProperty('source')
+    expect(typeof dataplug.source).toBe('function')
   })
 
   it('has "Source" class', () => {
-    dataplug.should.have.property('Source').that.is.an('function')
+    expect(dataplug).toHaveProperty('Source')
+    expect(typeof dataplug.Source).toBe('function')
   })
 
   it('has "target" function', () => {
-    dataplug.should.have.property('target').that.is.an('function')
+    expect(dataplug).toHaveProperty('target')
+    expect(typeof dataplug.target).toBe('function')
   })
 
   it('has "Target" class', () => {
-    dataplug.should.have.property('Target').that.is.an('function')
+    expect(dataplug).toHaveProperty('Target')
+    expect(typeof dataplug.Target).toBe('function')
   })
 
   describe('#source()', () => {
     it('creates an instance of Source', () => {
-      dataplug.source({}, null).should.be.an.instanceof(dataplug.Source)
+      expect(dataplug.source({}, null)).toBeInstanceOf(dataplug.Source)
     })
   })
 
   describe('#target()', () => {
     it('creates an instance of Target', () => {
-      dataplug.target({}, null).should.be.an.instanceof(dataplug.Target)
+      expect(dataplug.target({}, null)).toBeInstanceOf(dataplug.Target)
     })
   })
 })

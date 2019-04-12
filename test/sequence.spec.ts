@@ -1,16 +1,9 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import 'mocha'
-import chai from 'chai'
-import chaiAsPromised from 'chai-as-promised'
 import { PassThrough } from 'stream'
-import * as logger from 'winston'
 import Sequence from '../src/sequence'
-
-chai.use(chaiAsPromised)
-chai.should()
-logger.clear()
+import 'ts-jest'
 
 describe('Sequence', () => {
   it('supports array of streams', done => {
@@ -18,16 +11,18 @@ describe('Sequence', () => {
     const stream2 = new PassThrough()
     const sequence = new Sequence([stream1, stream2])
     let data = ''
-    new Promise((resolve, reject) =>
-      sequence
-        .on('end', () => resolve(data))
-        .on('error', reject)
-        .on('data', chunk => {
-          data += chunk
-        }),
-    ).should.eventually.be
-      .equal('12')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        sequence
+          .on('end', () => resolve(data))
+          .on('error', reject)
+          .on('data', chunk => {
+            data += chunk
+          }),
+      ),
+    )
+      .resolves.toEqual('12')
+      .then(done)
 
     stream1.write('1')
     stream1.end()
@@ -50,16 +45,18 @@ describe('Sequence', () => {
     })
 
     let data = ''
-    new Promise((resolve, reject) =>
-      sequence
-        .on('end', () => resolve(data))
-        .on('error', reject)
-        .on('data', chunk => {
-          data += chunk
-        }),
-    ).should.eventually.be
-      .equal('12')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        sequence
+          .on('end', () => resolve(data))
+          .on('error', reject)
+          .on('data', chunk => {
+            data += chunk
+          }),
+      ),
+    )
+      .resolves.toEqual('12')
+      .then(done)
 
     stream1.write('1')
     stream1.end()
@@ -82,16 +79,18 @@ describe('Sequence', () => {
     })
 
     let data = ''
-    new Promise((resolve, reject) =>
-      sequence
-        .on('end', () => resolve(data))
-        .on('error', reject)
-        .on('data', chunk => {
-          data += chunk
-        }),
-    ).should.eventually.be
-      .equal('12')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        sequence
+          .on('end', () => resolve(data))
+          .on('error', reject)
+          .on('data', chunk => {
+            data += chunk
+          }),
+      ),
+    )
+      .resolves.toEqual('12')
+      .then(done)
 
     stream1.write('1')
     stream1.end()
@@ -124,16 +123,18 @@ describe('Sequence', () => {
     })
 
     let data = ''
-    new Promise((resolve, reject) =>
-      sequence
-        .on('end', () => resolve(data))
-        .on('error', reject)
-        .on('data', chunk => {
-          data += chunk
-        }),
-    ).should.eventually.be
-      .equal('12')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        sequence
+          .on('end', () => resolve(data))
+          .on('error', reject)
+          .on('data', chunk => {
+            data += chunk
+          }),
+      ),
+    )
+      .resolves.toEqual('12')
+      .then(done)
   })
 
   it('handles exceptions', done => {
@@ -142,16 +143,18 @@ describe('Sequence', () => {
     })
 
     let data = ''
-    new Promise((resolve, reject) =>
-      sequence
-        .on('end', () => resolve(data))
-        .on('error', reject)
-        .on('data', chunk => {
-          data += chunk
-        }),
-    ).should.eventually.be
-      .equal('')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        sequence
+          .on('end', () => resolve(data))
+          .on('error', reject)
+          .on('data', chunk => {
+            data += chunk
+          }),
+      ),
+    )
+      .resolves.toEqual('')
+      .then(done)
   })
 
   it('handles async exceptions', done => {
@@ -160,16 +163,18 @@ describe('Sequence', () => {
     })
 
     let data = ''
-    new Promise((resolve, reject) =>
-      sequence
-        .on('end', () => resolve(data))
-        .on('error', reject)
-        .on('data', chunk => {
-          data += chunk
-        }),
-    ).should.eventually.be
-      .equal('')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        sequence
+          .on('end', () => resolve(data))
+          .on('error', reject)
+          .on('data', chunk => {
+            data += chunk
+          }),
+      ),
+    )
+      .resolves.toEqual('')
+      .then(done)
   })
 
   it('supports destroy', done => {
@@ -177,16 +182,18 @@ describe('Sequence', () => {
     const stream2 = new PassThrough()
     const sequence = new Sequence([stream1, stream2])
     let data = ''
-    new Promise((resolve, reject) =>
-      sequence
-        .on('end', () => resolve(data))
-        .on('error', reject)
-        .on('data', chunk => {
-          data += chunk
-        }),
-    ).should.eventually.be
-      .rejectedWith(/expected/)
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        sequence
+          .on('end', () => resolve(data))
+          .on('error', reject)
+          .on('data', chunk => {
+            data += chunk
+          }),
+      ),
+    )
+      .rejects.toThrowError('expected')
+      .then(done)
 
     stream1.write('1')
     sequence.destroy(new Error('expected'))
@@ -198,16 +205,18 @@ describe('Sequence', () => {
     const stream2 = new PassThrough()
     const sequence = new Sequence([stream1, stream2])
     let data = ''
-    new Promise((resolve, reject) =>
-      sequence
-        .on('end', () => resolve(data))
-        .on('error', reject)
-        .on('data', chunk => {
-          data += chunk
-        }),
-    ).should.eventually.be
-      .equal('12')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        sequence
+          .on('end', () => resolve(data))
+          .on('error', reject)
+          .on('data', chunk => {
+            data += chunk
+          }),
+      ),
+    )
+      .resolves.toEqual('12')
+      .then(done)
 
     sequence.once('data', () => {
       stream1.destroy()
@@ -220,17 +229,19 @@ describe('Sequence', () => {
   it('supports underlying error', done => {
     const stream = new PassThrough()
     const sequence = new Sequence([stream], { abortOnError: true })
-    new Promise((resolve, reject) =>
-      sequence
-        .on('end', () => {
-          reject(new Error())
-        })
-        .on('error', error => {
-          resolve(error)
-        }),
-    ).should.eventually.be
-      .equal('expected')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        sequence
+          .on('end', () => {
+            reject(new Error())
+          })
+          .on('error', error => {
+            resolve(error)
+          }),
+      ),
+    )
+      .resolves.toEqual('expected')
+      .then(done)
 
     sequence.once('data', chunk => {
       stream.emit('error', 'expected')
@@ -243,18 +254,20 @@ describe('Sequence', () => {
     const stream2 = new PassThrough()
     const sequence = new Sequence([stream1, stream2], { abortOnError: false })
     let data = ''
-    new Promise((resolve, reject) =>
-      sequence
-        .on('end', () => resolve(data))
-        .on('error', error => {
-          error.should.be.equal('expected')
-        })
-        .on('data', chunk => {
-          data += chunk
-        }),
-    ).should.eventually.be
-      .equal('12')
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        sequence
+          .on('end', () => resolve(data))
+          .on('error', error => {
+            expect(error).toThrow('expected')
+          })
+          .on('data', chunk => {
+            data += chunk
+          }),
+      ),
+    )
+      .resolves.toEqual('12')
+      .then(done)
 
     sequence.once('data', () => {
       stream1.emit('error', 'expected')
@@ -270,16 +283,18 @@ describe('Sequence', () => {
     const stream2 = new PassThrough()
     const sequence = new Sequence([stream1, stream2], { abortOnError: true })
     let data = ''
-    new Promise((resolve, reject) =>
-      sequence
-        .on('end', () => resolve(data))
-        .on('error', reject)
-        .on('data', chunk => {
-          data += chunk
-        }),
-    ).should.eventually.be
-      .rejectedWith(/expected/)
-      .notify(done)
+    expect(
+      new Promise((resolve, reject) =>
+        sequence
+          .on('end', () => resolve(data))
+          .on('error', reject)
+          .on('data', chunk => {
+            data += chunk
+          }),
+      ),
+    )
+      .rejects.toMatch(/expected/)
+      .then(done)
 
     sequence.once('data', () => {
       stream1.emit('error', 'expected')
