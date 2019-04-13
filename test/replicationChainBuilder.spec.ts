@@ -213,7 +213,7 @@ describe('ReplicationChainBuilder', () => {
     targetStream.once('data', () => {
       sourceStream.emit('error', 'expected')
     })
-    targetStream.on('finish', done)
+    targetStream.on('close', done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })

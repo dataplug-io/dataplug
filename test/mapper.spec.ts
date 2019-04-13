@@ -270,7 +270,9 @@ describe('Mapper', () => {
     )
     expect(
       new Promise((resolve, reject) => {
-        mapper.on('end', resolve).on('error', reject)
+        mapper
+          .on('end', resolve)
+          .on('error', reject)
       }),
     )
       .rejects.toThrow('emulated error')
@@ -281,4 +283,5 @@ describe('Mapper', () => {
     input.write('b')
     input.end()
   })
+
 })

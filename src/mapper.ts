@@ -25,6 +25,7 @@ export default class Mapper extends Transform {
   private _stream: Transform | null
   private _notifyTransformComplete: Function | null
   private readonly _onStreamEndHandler: () => void
+  private readonly _onStreamCloseHandler: () => void
   private readonly _onStreamErrorHandler: (error: Error) => void
   private readonly _onStreamDataHandler: (chunk: any) => void
 
@@ -50,6 +51,7 @@ export default class Mapper extends Transform {
     this._notifyTransformComplete = null
 
     this._onStreamEndHandler = () => this._onStreamEnd()
+    this._onStreamCloseHandler = () => this._onStreamClose()
     this._onStreamErrorHandler = error => this._onStreamError(error)
     this._onStreamDataHandler = chunk => this._onStreamData(chunk)
   }
@@ -79,6 +81,7 @@ export default class Mapper extends Transform {
         }
         this._stream
           .on('end', this._onStreamEndHandler)
+          .on('close', this._onStreamCloseHandler)
           .on('error', this._onStreamErrorHandler)
           .on('data', this._onStreamDataHandler)
       })
@@ -108,6 +111,7 @@ export default class Mapper extends Transform {
   _detachFromStream() {
     if (this._stream) {
       this._stream.removeListener('end', this._onStreamEndHandler)
+      this._stream.removeListener('close', this._onStreamCloseHandler)
       this._stream.removeListener('error', this._onStreamErrorHandler)
       this._stream.removeListener('data', this._onStreamDataHandler)
     }
@@ -117,6 +121,16 @@ export default class Mapper extends Transform {
    * Handles stream end event
    */
   _onStreamEnd() {
+    this._detachFromStream()
+    if (this._notifyTransformComplete) {
+      this._notifyTransformComplete()
+    }
+  }
+
+  /**
+   * Handles stream close event
+   */
+  _onStreamClose() {
     this._detachFromStream()
     if (this._notifyTransformComplete) {
       this._notifyTransformComplete()

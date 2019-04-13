@@ -24,6 +24,7 @@ export default class Sequence extends Readable {
   private _stream: Transform | null
   private readonly _nextStreamGetter?: Function | null
   private readonly _onStreamEndHandler: () => void
+  private readonly _onStreamCloseHandler: () => void
   private readonly _onStreamDataHandler: (chunk: any) => void
   private readonly _onStreamErrorHandler: (error: Error) => void
 
@@ -60,6 +61,7 @@ export default class Sequence extends Readable {
     }
 
     this._onStreamEndHandler = () => this._onStreamEnd()
+    this._onStreamCloseHandler = () => this._onStreamClose()
     this._onStreamErrorHandler = error => this._onStreamError(error)
     this._onStreamDataHandler = (chunk: any) => this._onStreamData(chunk)
 
@@ -120,6 +122,7 @@ export default class Sequence extends Readable {
           if (this._stream) {
             this._stream
               .on('end', this._onStreamEndHandler)
+              .on('close', this._onStreamCloseHandler)
               .on('error', this._onStreamErrorHandler)
               .on('data', this._onStreamDataHandler)
           }
@@ -138,6 +141,7 @@ export default class Sequence extends Readable {
   _detachFromStream() {
     if (this._stream) {
       this._stream.removeListener('end', this._onStreamEndHandler)
+      this._stream.removeListener('close', this._onStreamCloseHandler)
       this._stream.removeListener('error', this._onStreamErrorHandler)
       this._stream.removeListener('data', this._onStreamDataHandler)
     }
@@ -147,6 +151,14 @@ export default class Sequence extends Readable {
    * Handles stream end event
    */
   _onStreamEnd() {
+    this._detachFromStream()
+    this._obtainNextStream()
+  }
+
+  /**
+   * Handles stream close event
+   */
+  _onStreamClose() {
     this._detachFromStream()
     this._obtainNextStream()
   }
