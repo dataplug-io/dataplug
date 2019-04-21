@@ -4,7 +4,7 @@
 import 'ts-jest'
 import { Promise as BluebirdPromise } from 'bluebird'
 import { PassThrough } from 'stream'
-import Counter from '../src/counter'
+import { Counter } from '../src'
 
 describe('Counter', () => {
   it('passes through objects', done => {
@@ -48,7 +48,7 @@ describe('Counter', () => {
       },
     })
     expect(
-      new Promise((resolve, reject) => {
+      new BluebirdPromise((resolve, reject) => {
         let data: any[] = []
         counter
           .on('end', () => resolve(data))
@@ -84,7 +84,7 @@ describe('Counter', () => {
       },
     })
     expect(
-      new Promise((resolve, reject) => {
+      new BluebirdPromise((resolve, reject) => {
         let data: any[] = []
         counter
           .on('end', () => resolve(data))

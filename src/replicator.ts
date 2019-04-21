@@ -3,25 +3,26 @@
 
 import check from 'check-types'
 import { Transform } from 'stream'
-import Source from './source'
+import { Source } from './source'
 import {
   ReplicationChainBuilder,
   ReplicationChainBuilderCallback,
 } from './replicationChainBuilder'
-import Target from './target'
+import { Target } from './target'
 
 /**
  * Replicates data from source to target(s)
  */
-export default class Replicator {
-  private readonly _defaultSource: any
-  private readonly _defaultSourceParams: any
+export class Replicator {
+  private readonly _defaultSource: Source
+  private readonly _defaultSourceParams: object
+
   /**
    * @constructor
    * @param source Source to replicate
    * @param sourceParams Source parameters
    */
-  constructor(source?: Source, sourceParams?: Object) {
+  constructor(source: Source, sourceParams: object = {}) {
     this._defaultSource = source
     this._defaultSourceParams = sourceParams
   }
@@ -33,7 +34,7 @@ export default class Replicator {
    * @param targetParams Target parameters
    * @returns Replication chain builder instance
    */
-  to(target: Target, targetParams: any) {
+  to(target: Target, targetParams: object): ReplicationChainBuilder {
     check.assert.instance(this._defaultSource, Source)
     check.assert.object(this._defaultSourceParams)
 
@@ -49,7 +50,10 @@ export default class Replicator {
    * @param builder Builder function
    * @returns Replication chain builder instance
    */
-  via(transform: Transform, builder?: ReplicationChainBuilderCallback) {
+  via(
+    transform: Transform,
+    builder?: ReplicationChainBuilderCallback,
+  ): ReplicationChainBuilder {
     check.assert.instance(this._defaultSource, Source)
     check.assert.object(this._defaultSourceParams)
 

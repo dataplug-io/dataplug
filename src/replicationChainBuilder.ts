@@ -1,19 +1,29 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import { last, clone, isFunction, filter } from 'lodash'
+import { last, clone, filter } from 'lodash'
 import check from 'check-types'
-import { Writable, Transform } from 'stream'
-import Promise from 'bluebird'
-import replicate from './replicate'
-import Source from './source'
-import Target from './target'
+import { Promise as BluebirdPromise } from 'bluebird'
+import {
+  replicate,
+  isReplicationChainComplete,
+  ReplicationChain,
+  ReplicationChainElement,
+} from './replicate'
+import { Source } from './source'
+import { Target } from './target'
+import { TransformStream } from './stream'
 
-export interface ReplicationChainBuilderCallback {
-  (builder: ReplicationChainBuilder): void
-}
+export type ReplicationChainBuilderCallback = (
+  builder: ReplicationChainBuilder,
+) => void
+
+export type ReplicationChainBuilderChainsCallback = (
+  chains: ReplicationChain[],
+) => ReplicationChain[]
+
 export class ReplicationChainBuilder {
-  private _chains: any[]
+  private _chains: ReplicationChain[]
 
   /**
    * @constructor
@@ -39,7 +49,7 @@ export class ReplicationChainBuilder {
     source: Source,
     sourceParams: Object,
     builder?: ReplicationChainBuilderCallback,
-  ) {
+  ): ReplicationChainBuilder {
     if (builder) {
       const chainBuilder = new ReplicationChainBuilder().from(
         source,
@@ -47,19 +57,19 @@ export class ReplicationChainBuilder {
       )
       builder(chainBuilder)
       this._chains = chainBuilder.toChains().concat(this._chains)
+
       return this
     }
 
-    if (
-      this._chains.length > 0 &&
-      ReplicationChainBuilder._isComplete(last(this._chains))
-    ) {
-      throw new Error('Chain is incomplete')
+    const previousChain = last(this._chains)
+    if (previousChain && !isReplicationChainComplete(previousChain, false)) {
+      throw new Error('Previous chain is incomplete')
     }
 
     const output = source.createOutput(sourceParams)
-    // @ts-ignore
-    this._chains.push([].concat(output))
+    this._chains.push(
+      ([] as ReplicationChain).concat(output as ReplicationChainElement),
+    )
 
     return this
   }
@@ -70,22 +80,26 @@ export class ReplicationChainBuilder {
    * @param transform Transform
    * @param builder Builder function
    */
-  via(transform: Transform, builder?: ReplicationChainBuilderCallback) {
+  via(
+    transform: TransformStream,
+    builder?: ReplicationChainBuilderCallback,
+  ): ReplicationChainBuilder {
     if (builder) {
       const chainBuilder = new ReplicationChainBuilder(this).via(transform)
       builder(chainBuilder)
       this._chains = chainBuilder.toChains().concat(this._chains)
+
       return this
     }
 
     const lastChain = last(this._chains)
-    if (this._chains.length < 0) {
+    if (!lastChain) {
       throw new Error('No chain exists')
     }
-    if (ReplicationChainBuilder._isComplete(last(this._chains))) {
+    if (isReplicationChainComplete(lastChain, false)) {
       throw new Error('Chain is already complete')
     }
-    lastChain.push(transform)
+    lastChain.push(...([] as ReplicationChain).concat(transform))
 
     return this
   }
@@ -97,19 +111,22 @@ export class ReplicationChainBuilder {
    * @param targetParams Target parameters
    * @returns This instance for chaining purposes
    */
-  to(target: Target, targetParams: any) {
+  to(target: Target, targetParams: any): ReplicationChainBuilder {
     check.assert.object(targetParams)
 
     const lastChain = last(this._chains)
-    if (this._chains.length < 0) {
+    if (!lastChain) {
       throw new Error('No chain exists')
     }
-    if (ReplicationChainBuilder._isComplete(last(this._chains))) {
+    if (isReplicationChainComplete(lastChain, false)) {
       this._chains.push(lastChain.slice(0, -1))
     }
-    const input = target.createInput(targetParams)
-    // @ts-ignore
-    last(this._chains).push(...[].concat(input))
+    const targetStream = target.createInput(targetParams)
+    last(this._chains)!.push(
+      ...([] as ReplicationChain).concat(
+        targetStream as ReplicationChainElement,
+      ),
+    )
 
     return this
   }
@@ -117,38 +134,25 @@ export class ReplicationChainBuilder {
   /**
    * Replicates data
    */
-  replicate(chainsCallback?: Function) {
+  replicate(
+    chainsCallback?: ReplicationChainBuilderChainsCallback,
+  ): PromiseLike<{}[]> {
     let chains = this.toChains()
     if (chainsCallback) {
       chains = chainsCallback(chains) || chains
     }
-    return Promise.all(Promise.map(chains, chain => replicate(chain)))
+
+    return BluebirdPromise.all(
+      BluebirdPromise.map(chains, chain => replicate(chain)),
+    )
   }
 
   /**
    * Returns complete chains
    */
-  toChains() {
+  toChains(): ReplicationChain[] {
     return filter(this._chains, chain =>
-      ReplicationChainBuilder._isComplete(chain),
+      isReplicationChainComplete(chain, false),
     ).map(chain => clone(chain))
-  }
-
-  /**
-   * Checks if chain is complete
-   */
-  static _isComplete(chain: any) {
-    if (chain.length <= 1) {
-      return false
-    }
-
-    const lastItemInChain = last(chain)
-    return (
-      Promise.resolve(lastItemInChain) === lastItemInChain ||
-      // @ts-ignore
-      isFunction(lastItemInChain.then) ||
-      (lastItemInChain instanceof Writable &&
-        !(lastItemInChain instanceof Transform))
-    )
   }
 }

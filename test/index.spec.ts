@@ -2,7 +2,7 @@
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import 'ts-jest'
-import { dataplug } from '../src'
+import * as dataplug from '../src'
 
 describe('dataplug', () => {
   it('has "config" field', () => {
@@ -28,11 +28,6 @@ describe('dataplug', () => {
   it('has "Filter" class', () => {
     expect(dataplug).toHaveProperty('Filter')
     expect(typeof dataplug.Filter).toBe('function')
-  })
-
-  it('has "JsonUtils" class', () => {
-    expect(dataplug).toHaveProperty('JsonUtils')
-    expect(typeof dataplug.JsonUtils).toBe('function')
   })
 
   it('has "Mapper" class', () => {
@@ -94,6 +89,32 @@ describe('dataplug', () => {
   describe('#target()', () => {
     it('creates an instance of Target', () => {
       expect(dataplug.target({}, null)).toBeInstanceOf(dataplug.Target)
+    })
+  })
+
+  describe('dataplug.config', () => {
+    it('has "declare" function', () => {
+      expect(dataplug.config).toHaveProperty('declare')
+      expect(typeof dataplug.config.declare).toBe('function')
+    })
+
+    it('has "map" function', () => {
+      expect(dataplug.config).toHaveProperty('map')
+      expect(typeof dataplug.config.map).toBe('function')
+    })
+
+    describe('#declare()', () => {
+      it('creates an instance of ConfigDeclaration', () => {
+        expect(dataplug.config.declare()).toBeInstanceOf(
+          dataplug.ConfigDeclaration,
+        )
+      })
+    })
+
+    describe('#map()', () => {
+      it('creates an instance of ConfigMapping', () => {
+        expect(dataplug.config.map()).toBeInstanceOf(dataplug.ConfigMapping)
+      })
     })
   })
 })

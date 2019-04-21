@@ -1,17 +1,28 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import { forOwn, forEach, without, cloneDeep, find } from 'lodash'
+import {
+  forOwn,
+  forEach,
+  without,
+  cloneDeep,
+  find,
+  isFunction,
+  isObject,
+  isArray,
+} from 'lodash'
+import { JSONSchema6, JSONSchema6Definition } from 'json-schema'
 import { ConfigDeclarationParameter } from './configDeclarationParameter'
-import { ConfigDeclarationJsonSchema } from './configDeclarationJsonSchema'
 
 /**
  * Configuration declaration
  *
  * Each property of instance is a parameter declaration
  */
-export default class ConfigDeclaration {
-  constructor(that?: Object) {
+export class ConfigDeclaration {
+  constructor(
+    that?: ConfigDeclaration | { [key: string]: ConfigDeclarationParameter },
+  ) {
     if (that) {
       forOwn(that, (value, name) => {
         this[name] = cloneDeep(value)
@@ -22,7 +33,10 @@ export default class ConfigDeclaration {
   /**
    * Includes declarations from specified configuration.
    */
-  include(that: Object, forced: boolean = false) {
+  include(
+    that: ConfigDeclaration | { [key: string]: ConfigDeclarationParameter },
+    forced: boolean = false,
+  ) {
     forOwn(that, (value, name) => {
       if (!forced && this[name]) {
         throw new Error(`'${name}' parameter already declared`)
@@ -41,7 +55,10 @@ export default class ConfigDeclaration {
    * @param forced Overwrite parameter declaration
    * @return This instance (for chaining purposes)
    */
-  parameters(parameters: ConfigDeclaration | Object, forced: boolean = false) {
+  parameters(
+    parameters: { [key: string]: ConfigDeclarationParameter },
+    forced: boolean = false,
+  ) {
     return this.include(parameters, forced)
   }
 
@@ -55,7 +72,7 @@ export default class ConfigDeclaration {
    */
   parameter(
     name: string,
-    definition: {} | ConfigDeclarationParameter,
+    definition: ConfigDeclarationParameter,
     forced: boolean = false,
   ) {
     if (!forced && this[name]) {
@@ -110,16 +127,22 @@ export default class ConfigDeclaration {
    *
    * @returns {Object} JSON schema
    */
-  toJSONSchema() {
-    const schema: ConfigDeclarationJsonSchema = {
+  toJSONSchema(): JSONSchema6 {
+    const schema: JSONSchema6 = {
       type: 'object',
       additionalProperties: false,
       properties: {},
       required: [],
     }
 
-    forOwn(this, (declaration: any, parameterName: string) => {
-      const property: any = {}
+    forOwn(this, (entry: any, parameterName) => {
+      if (isFunction(entry)) {
+        return
+      }
+
+      const declaration = entry as ConfigDeclarationParameter
+
+      const property: JSONSchema6Definition = {}
       if (declaration.description !== undefined) {
         property.description = declaration.description
       }
@@ -132,7 +155,7 @@ export default class ConfigDeclaration {
         }
       }
       if (declaration.format !== undefined) {
-        if (property.items) {
+        if (isObject(property.items) && !isArray(property.items)) {
           property.items.format = declaration.format
         } else {
           property.format = declaration.format
@@ -145,14 +168,14 @@ export default class ConfigDeclaration {
         property.default = declaration.default
       }
       if (declaration.required) {
-        schema.required.push(parameterName)
+        schema.required!.push(parameterName)
       }
       // TODO: if (declaration.conflicts) {
       //  property.default = declaration.conflicts
       // }
       // not { dependencies: ["", ""] }
 
-      schema.properties[parameterName] = cloneDeep(property)
+      schema.properties![parameterName] = cloneDeep(property)
     })
 
     return schema

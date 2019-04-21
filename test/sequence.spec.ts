@@ -3,7 +3,8 @@
 
 import 'ts-jest'
 import { PassThrough } from 'stream'
-import Sequence from '../src/sequence'
+import { Promise as BluebirdPromise } from 'bluebird'
+import { Sequence } from '../src'
 
 describe('Sequence', () => {
   it('supports array of streams', done => {
@@ -12,11 +13,11 @@ describe('Sequence', () => {
     const sequence = new Sequence([stream1, stream2])
     let data = ''
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         sequence
           .on('end', () => resolve(data))
           .on('error', reject)
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           }),
       ),
@@ -46,11 +47,11 @@ describe('Sequence', () => {
 
     let data = ''
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         sequence
           .on('end', () => resolve(data))
           .on('error', reject)
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           }),
       ),
@@ -68,7 +69,7 @@ describe('Sequence', () => {
   it('supports async functor', done => {
     const stream1 = new PassThrough()
     const stream2 = new PassThrough()
-    const sequence = new Sequence(async (oldStream: any, oldContext: any) => {
+    const sequence = new Sequence(async (oldStream, oldContext) => {
       if (oldStream === null) {
         return stream1
       }
@@ -80,11 +81,11 @@ describe('Sequence', () => {
 
     let data = ''
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         sequence
           .on('end', () => resolve(data))
           .on('error', reject)
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           }),
       ),
@@ -102,7 +103,7 @@ describe('Sequence', () => {
   it('handles errors', done => {
     const stream1 = new PassThrough()
     const stream2 = new PassThrough()
-    const sequence = new Sequence(async (oldStream: any, oldContext: any) => {
+    const sequence = new Sequence(async (oldStream, oldContext) => {
       if (oldStream === null) {
         setTimeout(() => {
           stream1.write('1')
@@ -124,11 +125,11 @@ describe('Sequence', () => {
 
     let data = ''
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         sequence
           .on('end', () => resolve(data))
           .on('error', reject)
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           }),
       ),
@@ -144,11 +145,11 @@ describe('Sequence', () => {
 
     let data = ''
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         sequence
           .on('end', () => resolve(data))
           .on('error', reject)
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           }),
       ),
@@ -158,17 +159,18 @@ describe('Sequence', () => {
   })
 
   it('handles async exceptions', done => {
-    const sequence = new Sequence(async (oldStream: any, oldContext: any) => {
+    const sequence = new Sequence(async (oldStream, oldContext) => {
       throw new Error('expected')
+      return null
     })
 
     let data = ''
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         sequence
           .on('end', () => resolve(data))
           .on('error', reject)
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           }),
       ),
@@ -183,11 +185,11 @@ describe('Sequence', () => {
     const sequence = new Sequence([stream1, stream2])
     let data = ''
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         sequence
           .on('end', () => resolve(data))
           .on('error', reject)
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           }),
       ),
@@ -206,11 +208,11 @@ describe('Sequence', () => {
     const sequence = new Sequence([stream1, stream2])
     let data = ''
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         sequence
           .on('end', () => resolve(data))
           .on('error', reject)
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           }),
       ),
@@ -230,7 +232,7 @@ describe('Sequence', () => {
     const stream = new PassThrough()
     const sequence = new Sequence([stream], { abortOnError: true })
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         sequence
           .on('end', () => {
             reject(new Error())
@@ -255,13 +257,13 @@ describe('Sequence', () => {
     const sequence = new Sequence([stream1, stream2], { abortOnError: false })
     let data = ''
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         sequence
           .on('end', () => resolve(data))
           .on('error', error => {
             expect(error).toThrow('expected')
           })
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           }),
       ),
@@ -284,11 +286,11 @@ describe('Sequence', () => {
     const sequence = new Sequence([stream1, stream2], { abortOnError: true })
     let data = ''
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         sequence
           .on('end', () => resolve(data))
           .on('error', reject)
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           }),
       ),

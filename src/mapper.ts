@@ -1,15 +1,25 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import { Transform } from 'stream'
-import { Promise } from 'bluebird'
+import { isFunction } from 'lodash'
+import { Transform, TransformCallback } from 'stream'
+import { Promise as BluebirdPromise } from 'bluebird'
 import * as logger from 'winston'
-import { MapperOptions } from './mapperOptions'
+
+export interface MapperOptions {
+  inputObjectMode?: boolean
+  outputObjectMode?: boolean
+  abortOnError?: boolean
+}
+
+export type MapperFactoryCallback = (
+  chunk: any,
+) => NodeJS.ReadableStream | PromiseLike<NodeJS.ReadableStream>
 
 /**
  * Maps input stream to derivative readable stream
  */
-export default class Mapper extends Transform {
+export class Mapper extends Transform {
   /**
    * @param inputObjectMode True if input data is object stream, false if raw data chunks
    * @param outputObjectMode True if output data is object stream, false if raw data chunks
@@ -20,9 +30,10 @@ export default class Mapper extends Transform {
     outputObjectMode: false,
     abortOnError: false,
   }
-  private _factory: any
+
+  private _factory: MapperFactoryCallback
   private _options: MapperOptions
-  private _stream: Transform | null
+  private _stream: NodeJS.ReadableStream | null
   private _notifyTransformComplete: Function | null
   private readonly _onStreamEndHandler: () => void
   private readonly _onStreamCloseHandler: () => void
@@ -35,7 +46,7 @@ export default class Mapper extends Transform {
    * @param factory Derivative stream factory
    * @param options Mapping options
    */
-  constructor(factory: Function, options?: MapperOptions) {
+  constructor(factory: MapperFactoryCallback, options?: MapperOptions) {
     options = Object.assign({}, Mapper.DEFAULT_OPTIONS, options)
 
     super({
@@ -60,25 +71,23 @@ export default class Mapper extends Transform {
    * https://nodejs.org/api/stream.html#stream_transform_transform_chunk_encoding_callback
    * @override
    */
-  _transform(
-    chunk: Buffer | string | any,
-    encoding: string,
-    callback: Function,
-  ) {
-    Promise.try(() => this._factory(chunk))
+  _transform(chunk: any, encoding: string, callback: TransformCallback) {
+    BluebirdPromise.try(() => this._factory(chunk))
       .catch(error => {
         logger.log('error', 'Error in Mapper while creating stream:', error)
         if (this._options.abortOnError) {
           throw error
         }
+
+        return null
       })
       .then(stream => {
-        this._stream = stream
-        this._notifyTransformComplete = callback
-        if (!this._stream) {
+        if (!stream) {
           callback()
           return
         }
+        this._stream = stream
+        this._notifyTransformComplete = callback
         this._stream
           .on('end', this._onStreamEndHandler)
           .on('close', this._onStreamCloseHandler)
@@ -98,7 +107,9 @@ export default class Mapper extends Transform {
   _destroy(error: Error, callback: any) {
     if (this._stream) {
       this._detachFromStream()
-      this._stream.destroy()
+      if (isFunction(this._stream['destroy'])) {
+        this._stream['destroy']()
+      }
       this._stream = null
     }
 

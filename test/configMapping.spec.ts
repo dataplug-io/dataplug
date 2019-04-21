@@ -2,7 +2,7 @@
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import 'ts-jest'
-import ConfigMapping from '../src/configMapping'
+import { ConfigMapping } from '../src'
 
 describe('ConfigMapping', () => {
   describe('#constructor()', () => {

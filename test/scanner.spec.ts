@@ -3,7 +3,8 @@
 
 import 'ts-jest'
 import { PassThrough } from 'stream'
-import Scanner from '../src/scanner'
+import { Promise as BluebirdPromise } from 'bluebird'
+import { Scanner } from '../src'
 
 describe('Scanner', () => {
   it('passes through objects', done => {
@@ -14,7 +15,7 @@ describe('Scanner', () => {
     const stream = new PassThrough({ objectMode: true })
     const scanner = new Scanner(() => {})
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         scanner
           .on('end', resolve)
           .on('error', reject)
@@ -38,14 +39,13 @@ describe('Scanner', () => {
     }
 
     const stream = new PassThrough({ objectMode: true })
-    const scanner = new Scanner((object: any) => {
+    const scanner = new Scanner(object => {
       if (object.property === 'bad') {
         throw new Error('expected')
       }
-      return true
     })
     expect(
-      new Promise((resolve, reject) => {
+      new BluebirdPromise((resolve, reject) => {
         let data: any[] = []
         scanner
           .on('end', () => resolve(data))
@@ -72,14 +72,13 @@ describe('Scanner', () => {
     }
 
     const stream = new PassThrough({ objectMode: true })
-    const scanner = new Scanner(async (object: any) => {
+    const scanner = new Scanner(async object => {
       if (object.property === 'bad') {
         throw new Error('expected')
       }
-      return true
     })
     expect(
-      new Promise((resolve, reject) => {
+      new BluebirdPromise((resolve, reject) => {
         let data: any[] = []
         scanner
           .on('end', () => resolve(data))
@@ -105,14 +104,14 @@ describe('Scanner', () => {
     const stream = new PassThrough({ objectMode: true })
     const scanner = new Scanner(
       async () =>
-        new Promise(resolve => {
+        new BluebirdPromise<void>(resolve => {
           setTimeout(() => {
-            resolve(true)
+            resolve()
           }, 25)
         }),
     )
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         scanner
           .on('end', resolve)
           .on('error', reject)

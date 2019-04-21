@@ -3,7 +3,7 @@
 
 import 'ts-jest'
 import { PassThrough } from 'stream'
-import Target from '../src/target'
+import { Target } from '../src'
 
 describe('Target', () => {
   it('supports instantly-available stream', done => {

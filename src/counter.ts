@@ -4,21 +4,33 @@
 import { forOwn, isArray, findLast, isFunction } from 'lodash'
 import check from 'check-types'
 import { Transform } from 'stream'
-import { Promise } from 'bluebird'
+import { Promise as BluebirdPromise } from 'bluebird'
 import * as logger from 'winston'
-import { CounterOptions } from './counterOptions'
+
+export interface CounterOptions {
+  counter: (data: any, count: (...args: any[]) => void) => void
+  logger: (message: string, ...args: any[]) => void
+  prefixComponents: string[]
+  suffixComponents: string[]
+  thresholds: number[]
+  abortOnError: boolean
+}
 
 /**
  * Counts objects
  */
-export default class Counter extends Transform {
-  static DEFAULT_OPTIONS: {
-    counter: (data: any, count: (...args: any[]) => void) => void
-    logger: (...args: any[]) => void
-    prefixComponents: string[]
-    suffixComponents: string[]
-    thresholds: number[]
-    abortOnError: boolean
+export class Counter extends Transform {
+  static readonly DEFAULT_OPTIONS: CounterOptions = {
+    counter: (data, count) => {
+      count()
+    },
+    logger: (message, ...args) => {
+      logger.log('info', message, ...args)
+    },
+    prefixComponents: ['Processed'],
+    suffixComponents: ['item(s)'],
+    thresholds: [10, 50, 250],
+    abortOnError: false,
   }
   private _options: any
   private _defaultCount: (...args: any[]) => void
@@ -50,7 +62,7 @@ export default class Counter extends Transform {
     encoding: string,
     callback: Function,
   ) {
-    Promise.try(() => this._options.counter(chunk, this._defaultCount))
+    BluebirdPromise.try(() => this._options.counter(chunk, this._defaultCount))
       .then(() => {
         this._print()
         callback(null, chunk)

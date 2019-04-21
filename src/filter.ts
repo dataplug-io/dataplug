@@ -2,23 +2,26 @@
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import { isError } from 'lodash'
-import { Transform } from 'stream'
-import { Promise } from 'bluebird'
+import { Transform, TransformCallback } from 'stream'
+import { Promise as BluebirdPromise } from 'bluebird'
 import * as logger from 'winston'
+
+export type FilterCallback = (chunk: any) => any | PromiseLike<any>
 
 /**
  * Filters the object stream
  */
-export default class Filter extends Transform {
-  private _filterCallback: Function
+export class Filter extends Transform {
+  private _filterCallback: FilterCallback
   private readonly _abortOnError: boolean
+
   /**
    * @constructor
    *
    * @param filterCallback
    * @param abortOnError True if error in filtering should emit error, false otherwise
    */
-  constructor(filterCallback: Function, abortOnError: boolean = false) {
+  constructor(filterCallback: FilterCallback, abortOnError: boolean = false) {
     super({
       objectMode: true,
     })
@@ -31,12 +34,8 @@ export default class Filter extends Transform {
    * https://nodejs.org/api/stream.html#stream_transform_transform_chunk_encoding_callback
    * @override
    */
-  _transform(
-    chunk: Buffer | string | any,
-    encoding: string,
-    callback: Function,
-  ) {
-    Promise.try(() => this._filterCallback(chunk))
+  _transform(chunk: any, encoding: string, callback: TransformCallback) {
+    BluebirdPromise.try(() => this._filterCallback(chunk))
       .catch(error => {
         logger.log('error', 'Error in Filter', error)
         return error

@@ -3,8 +3,8 @@
 
 import 'ts-jest'
 import { Promise as BluebirdPromise } from 'bluebird'
-import Filter from '../src/filter'
 import { PassThrough } from 'stream'
+import { Filter } from '../src'
 
 describe('Filter', () => {
   it('passes through objects', done => {
@@ -46,7 +46,7 @@ describe('Filter', () => {
       return true
     })
     expect(
-      new Promise((resolve, reject) => {
+      new BluebirdPromise((resolve, reject) => {
         let data: any[] = []
         filter
           .on('end', () => resolve(data))
@@ -80,7 +80,7 @@ describe('Filter', () => {
       return true
     })
     expect(
-      new Promise((resolve, reject) => {
+      new BluebirdPromise((resolve, reject) => {
         let data: any[] = []
         filter
           .on('end', () => resolve(data))
@@ -106,14 +106,14 @@ describe('Filter', () => {
     const stream = new PassThrough({ objectMode: true })
     const filter = new Filter(
       async () =>
-        new Promise(resolve => {
+        new BluebirdPromise(resolve => {
           setTimeout(() => {
             resolve(true)
           }, 25)
         }),
     )
     expect(
-      new Promise((resolve, reject) =>
+      new BluebirdPromise((resolve, reject) =>
         filter
           .on('end', resolve)
           .on('error', reject)

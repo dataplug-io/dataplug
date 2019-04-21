@@ -3,35 +3,58 @@
 
 import { cloneDeep } from 'lodash'
 import check from 'check-types'
+import { Promise as BluebirdPromise } from 'bluebird'
 import Ajv from 'ajv'
-import ConfigDeclaration from './configDeclaration'
+import { ConfigDeclaration } from './configDeclaration'
+import { ConfigDeclarationParameter } from './configDeclarationParameter'
+
+export type TargetStream =
+  | NodeJS.WritableStream
+  | PromiseLike<NodeJS.WritableStream>
+  | Array<NodeJS.WritableStream | PromiseLike<NodeJS.WritableStream>>
+  | PromiseLike<
+      Array<NodeJS.WritableStream | PromiseLike<NodeJS.WritableStream>>
+    >
+
+export type InputFactory = (params: object) => TargetStream
 
 /**
  * Target declaration
  * Usually exposed as require('specific-dataplug').someCollection.target
+ *
+ * @property {ConfigDeclaration} configDeclaration Configuration declaration
  */
-export default class Target {
-  private configDeclaration: ConfigDeclaration
-  private readonly _inputFactory: Function | undefined
+export class Target {
+  private readonly _inputFactory: InputFactory | null
+
+  readonly configDeclaration: ConfigDeclaration
+
   /**
    * @param configDeclaration Config declaration
-   * @param {Target~InputFactory} [inputFactory=] Input factory
+   * @param {InputFactory} [inputFactory=] Input factory
    */
   constructor(
-    configDeclaration: {} | ConfigDeclaration | Object,
-    inputFactory?: Function,
+    configDeclaration:
+      | ConfigDeclaration
+      | { [key: string]: ConfigDeclarationParameter },
+    inputFactory?: InputFactory,
   ) {
     this.configDeclaration = new ConfigDeclaration(configDeclaration)
-    this._inputFactory = inputFactory
+    this._inputFactory = inputFactory || null
   }
 
   /**
    * Creates input stream instance
    *
    * @param params Parameters
-   * @returns {Writable|Writable[]} Input object stream(s) chain
+   * @returns Input object stream(s) chain
    */
-  async createInput(params: Object) {
+  async createInput(
+    params: Object,
+  ): Promise<
+    | NodeJS.WritableStream
+    | Array<NodeJS.WritableStream | PromiseLike<NodeJS.WritableStream>>
+  > {
     check.assert.object(params)
 
     if (!this._inputFactory) {
@@ -48,6 +71,6 @@ export default class Target {
       throw new Error('Invalid parameters: ' + JSON.stringify(validator.errors))
     }
 
-    return this._inputFactory(params)
+    return BluebirdPromise.resolve<TargetStream>(this._inputFactory(params))
   }
 }

@@ -4,7 +4,7 @@
 import { forOwn, clone, isRegExp } from 'lodash'
 import check from 'check-types'
 
-export default class ConfigMapping {
+export class ConfigMapping {
   /**
    * @constructor
    * @param that Other mapping to clone

@@ -3,9 +3,8 @@
 
 import 'ts-jest'
 import { PassThrough } from 'stream'
-import Target from '../src/target'
-import Source from '../src/source'
-import Replicator from '../src/replicator'
+import { Promise as BluebirdPromise } from 'bluebird'
+import { Target, Source, Replicator } from '../src'
 
 describe('Replicator', () => {
   it('replicates data', done => {
@@ -21,13 +20,11 @@ describe('Replicator', () => {
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
+    const replicatorChainBuilder = new Replicator(source, {}).to(target, {})
     expect(
-      new Replicator(source, {})
-        .to(target, {})
-        .replicate()
-        .then(() => {
-          return data
-        }),
+      replicatorChainBuilder.replicate().then(() => {
+        return data
+      }),
     )
       .resolves.toMatchObject([{ property: 'valueA' }, { property: 'valueB' }])
       .then(done)
@@ -99,12 +96,12 @@ describe('Replicator', () => {
     const sourceStream = new PassThrough({
       objectMode: true,
     })
-    const source = new Source({}, async () => [sourceStream])
+    const source = new Source({}, () => [BluebirdPromise.resolve(sourceStream)])
 
     const targetStream = new PassThrough({
       objectMode: true,
     })
-    const target = new Target({}, async () => [targetStream])
+    const target = new Target({}, () => [BluebirdPromise.resolve(targetStream)])
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
@@ -173,11 +170,11 @@ describe('Replicator', () => {
     targetStream.on('data', chunk => data.push(chunk))
     expect(
       new Replicator(source, {}).to(target, {}).replicate(),
-    ).rejects.toEqual('expected')
+    ).rejects.toThrow(/expected/)
     targetStream.once('data', () => {
-      sourceStream.emit('error', 'expected')
+      sourceStream.emit('error', new Error('expected'))
     })
-    targetStream.on('close', done)
+    targetStream.on('finish', done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })

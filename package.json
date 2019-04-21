@@ -5,15 +5,17 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "prepublishOnly": "npm run preversion && npm run prepare:production",
+    "prepublishOnly": "npm run preversion && npm run clean && npm run compile",
     "postpublish": "rimraf dist",
-    "prepare:production": "rimraf dist && tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "docs": "typedoc --out ./docs ./src",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "test": "jest",
+    "clean": "rimraf dist && rimraf tests/coverage",
+    "compile": "tsc",
+    "build": "npm run clean && npm run lint && npm run test && npm run compile",
     "coverage": "jest --coverage",
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
+    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
     "preversion": "npm run lint && npm run test",
     "postversion": "git push && git push --tags"
   },
@@ -29,6 +31,10 @@
   "bugs": {
     "url": "https://github.com/dataplug-io/dataplug/issues"
   },
+  "jest": {
+    "collectCoverage": true,
+    "collectDirectory": "./tests/coverage/lcov.info"
+  },
   "homepage": "https://github.com/dataplug-io/dataplug#readme",
   "dependencies": {
     "ajv": "^6.10.0",
@@ -43,22 +49,21 @@
     "@types/jest": "^24.0.11",
     "@types/json-schema": "^7.0.3",
     "@types/lodash": "^4.14.123",
-    "@types/node": "^11.13.4",
+    "@types/node": "^11.13.6",
     "coveralls": "^3.0.3",
     "jest": "^24.7.1",
-    "nyc": "^13.3.0",
-    "prettier": "^1.16.4",
+    "prettier": "^1.17.0",
     "rimraf": "^2.6.3",
     "standard": "^12.0.1",
     "ts-jest": "^24.0.2",
     "ts-loader": "^5.3.3",
-    "ts-node": "^8.0.3",
+    "ts-node": "^8.1.0",
     "tsconfig-paths": "^3.8.0",
-    "tslint": "5.15.0",
+    "tslint": "^5.16.0",
     "tslint-config-prettier": "^1.18.0",
     "tslint-config-standard": "^8.0.1",
     "tslint-plugin-prettier": "^2.0.1",
     "typedoc": "^0.14.2",
-    "typescript": "^3.4.3"
+    "typescript": "^3.4.4"
   }
 }

@@ -1,22 +1,25 @@
 // Copyright (C) 2017-2019 Brainbean Apps OU (https://brainbeanapps.com).
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
-import { Transform } from 'stream'
-import Promise from 'bluebird'
+import { Transform, TransformCallback } from 'stream'
+import { Promise as BluebirdPromise } from 'bluebird'
 import * as logger from 'winston'
+
+export type ScannerCallback = (chunk: any) => void | PromiseLike<void>
 
 /**
  * Scans the object stream
  */
-export default class Scanner extends Transform {
-  private _scannerCallback: any
+export class Scanner extends Transform {
+  private _scannerCallback: ScannerCallback
   private readonly _abortOnError: boolean
+
   /**
    * @constructor
    * @param scannerCallback
    * @param abortOnError True if error in filtering should emit error, false otherwise
    */
-  constructor(scannerCallback: Function, abortOnError: boolean = false) {
+  constructor(scannerCallback: ScannerCallback, abortOnError: boolean = false) {
     super({
       objectMode: true,
     })
@@ -29,12 +32,8 @@ export default class Scanner extends Transform {
    * https://nodejs.org/api/stream.html#stream_transform_transform_chunk_encoding_callback
    * @override
    */
-  _transform(
-    chunk: Buffer | string | any,
-    encoding: string,
-    callback: Function,
-  ) {
-    Promise.try(() => this._scannerCallback(chunk))
+  _transform(chunk: any, encoding: string, callback: TransformCallback) {
+    BluebirdPromise.try(() => this._scannerCallback(chunk))
       .catch(error => {
         logger.log('error', 'Error in Scanner', error)
         return error

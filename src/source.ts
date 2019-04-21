@@ -3,7 +3,19 @@
 
 import { cloneDeep } from 'lodash'
 import Ajv from 'ajv'
-import ConfigDeclaration from './configDeclaration'
+import { Promise as BluebirdPromise } from 'bluebird'
+import { ConfigDeclaration } from './configDeclaration'
+import { ConfigDeclarationParameter } from './configDeclarationParameter'
+
+export type SourceStream =
+  | NodeJS.ReadableStream
+  | PromiseLike<NodeJS.ReadableStream>
+  | Array<NodeJS.ReadableStream | PromiseLike<NodeJS.ReadableStream>>
+  | PromiseLike<
+      Array<NodeJS.ReadableStream | PromiseLike<NodeJS.ReadableStream>>
+    >
+
+export type OutputFactory = (params: object) => SourceStream
 
 /**
  * Source declaration
@@ -12,17 +24,20 @@ import ConfigDeclaration from './configDeclaration'
  *
  * @property {ConfigDeclaration} configDeclaration Configuration declaration
  */
-export default class Source {
-  private readonly _outputFactory: any
-  private readonly configDeclaration: ConfigDeclaration
+export class Source {
+  private readonly _outputFactory: OutputFactory
+
+  readonly configDeclaration: ConfigDeclaration
 
   /**
    * @param configDeclaration Config declaration
    * @param outputFactory Output factory
    */
   constructor(
-    configDeclaration: ConfigDeclaration | Object,
-    outputFactory?: Function,
+    configDeclaration:
+      | ConfigDeclaration
+      | { [key: string]: ConfigDeclarationParameter },
+    outputFactory: OutputFactory,
   ) {
     this.configDeclaration = new ConfigDeclaration(configDeclaration)
     this._outputFactory = outputFactory
@@ -34,11 +49,12 @@ export default class Source {
    * @param params Parameters
    * @return Output object stream(s) chain
    */
-  async createOutput(params: Object) {
-    if (!this._outputFactory) {
-      throw new Error('No factory specified for this source')
-    }
-
+  async createOutput(
+    params: Object,
+  ): Promise<
+    | NodeJS.ReadableStream
+    | Array<NodeJS.ReadableStream | PromiseLike<NodeJS.ReadableStream>>
+  > {
     params = cloneDeep(params)
     const validator = new Ajv({
       allErrors: true,
@@ -49,6 +65,6 @@ export default class Source {
       throw new Error('Invalid parameters: ' + JSON.stringify(validator.errors))
     }
 
-    return this._outputFactory(params)
+    return BluebirdPromise.resolve<SourceStream>(this._outputFactory(params))
   }
 }

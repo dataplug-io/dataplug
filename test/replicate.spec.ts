@@ -3,9 +3,8 @@
 
 import 'ts-jest'
 import { PassThrough } from 'stream'
-import Source from '../src/source'
-import Target from '../src/target'
-import replicate from '../src/replicate'
+import { Promise as BluebirdPromise } from 'bluebird'
+import { Source, Target, replicate } from '../src'
 
 describe('replicate()', () => {
   it('replicates data', done => {
@@ -90,12 +89,12 @@ describe('replicate()', () => {
     const sourceStream = new PassThrough({
       objectMode: true,
     })
-    const source = new Source({}, async () => [sourceStream])
+    const source = new Source({}, () => [BluebirdPromise.resolve(sourceStream)])
 
     const targetStream = new PassThrough({
       objectMode: true,
     })
-    const target = new Target({}, async () => [targetStream])
+    const target = new Target({}, () => [BluebirdPromise.resolve(targetStream)])
 
     let data: any[] = []
     targetStream.on('data', chunk => data.push(chunk))
@@ -162,12 +161,12 @@ describe('replicate()', () => {
 
     expect(
       replicate([source.createOutput({}), target.createInput({})]),
-    ).rejects.toEqual('expected')
+    ).rejects.toThrow(/expected/)
 
     targetStream.once('data', () => {
-      sourceStream.emit('error', 'expected')
+      sourceStream.emit('error', new Error('expected'))
     })
-    targetStream.on('close', done)
+    targetStream.on('finish', done)
 
     sourceStream.write({ property: 'valueA' })
     sourceStream.write({ property: 'valueB' })

@@ -2,27 +2,43 @@
 // License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 import { isFunction, isArray, isNil } from 'lodash'
-import { Readable, Transform } from 'stream'
-import Promise from 'bluebird'
+import { Readable } from 'stream'
+import { Promise as BluebirdPromise } from 'bluebird'
 import * as logger from 'winston'
-import { SequenceOptions } from './sequenceOptions'
+
+export interface SequenceOptions {
+  objectMode?: boolean
+  abortOnError?: boolean
+}
+
+export type SequenceFactory = (
+  oldStream: NodeJS.ReadableStream | null,
+  oldContext: any | null,
+) =>
+  | NodeJS.ReadableStream
+  | Array<NodeJS.ReadableStream | any>
+  | null
+  | PromiseLike<
+      NodeJS.ReadableStream | Array<NodeJS.ReadableStream | any> | null
+    >
 
 /**
  * Wraps multiple readable streams into a sequence
  */
-export default class Sequence extends Readable {
+export class Sequence extends Readable {
   /**
    * @param objectMode Object mode setting
    * @param abortOnError True if error in sequence should emit error, false otherwise
    */
-  static DEFAULT_OPTIONS: {
-    objectMode: boolean
-    abortOnError: boolean
+  static DEFAULT_OPTIONS: SequenceOptions = {
+    objectMode: true,
+    abortOnError: false,
   }
-  private _options: any
-  private _context: null
-  private _stream: Transform | null
-  private readonly _nextStreamGetter?: Function | null
+
+  private _options: SequenceOptions
+  private _context: any | null
+  private _stream: NodeJS.ReadableStream | null
+  private readonly _nextStreamGetter: SequenceFactory | null
   private readonly _onStreamEndHandler: () => void
   private readonly _onStreamCloseHandler: () => void
   private readonly _onStreamDataHandler: (chunk: any) => void
@@ -34,7 +50,7 @@ export default class Sequence extends Readable {
    * @param options Sequence options
    */
   constructor(
-    sequence: Function | Array<NodeJS.ReadableStream>,
+    sequence: SequenceFactory | Array<NodeJS.ReadableStream>,
     options?: SequenceOptions,
   ) {
     options = Object.assign({}, Sequence.DEFAULT_OPTIONS, options)
@@ -50,14 +66,15 @@ export default class Sequence extends Readable {
     if (isFunction(sequence)) {
       this._nextStreamGetter = sequence
     } else if (isArray(sequence)) {
-      // @ts-ignore
       this._nextStreamGetter = (oldStream, oldContext) => {
-        const index = (isNil(oldContext) ? -1 : oldContext) + 1
+        const index = (isNil(oldContext) ? -1 : (oldContext as number)) + 1
         if (index >= sequence.length) {
           return null
         }
         return [sequence[index], index]
       }
+    } else {
+      this._nextStreamGetter = null
     }
 
     this._onStreamEndHandler = () => this._onStreamEnd()
@@ -73,17 +90,19 @@ export default class Sequence extends Readable {
   /**
    * https://nodejs.org/api/stream.html#stream_readable_read_size_1
    */
-  _read(size: any) {
+  _read(size: number) {
     this.emit('read')
   }
 
   /**
    * https://nodejs.org/api/stream.html#stream_readable_destroy_err_callback
    */
-  _destroy(error: any, callback: any) {
+  _destroy(error: Error | null, callback: (error?: Error | null) => void) {
     if (this._stream) {
       this._detachFromStream()
-      this._stream.destroy(error)
+      if (isFunction(this._stream['destroy'])) {
+        this._stream['destroy'](error || undefined)
+      }
       this._stream = null
     }
 
@@ -95,8 +114,9 @@ export default class Sequence extends Readable {
    */
   _obtainNextStream() {
     if (this._nextStreamGetter) {
-      // @ts-ignore
-      Promise.try(() => this._nextStreamGetter(this._stream, this._context))
+      BluebirdPromise.try(() =>
+        this._nextStreamGetter!(this._stream, this._context),
+      )
         .catch(error => {
           logger.log(
             'error',
@@ -114,7 +134,8 @@ export default class Sequence extends Readable {
           }
 
           if (isArray(result)) {
-            ;[this._stream, this._context] = result
+            this._stream = result[0] as NodeJS.ReadableStream
+            this._context = result[1] as object
           } else {
             this._stream = result
             this._context = null

@@ -4,7 +4,7 @@
 import 'ts-jest'
 import { Promise as BluebirdPromise } from 'bluebird'
 import { PassThrough } from 'stream'
-import Mapper from '../src/mapper'
+import { Mapper } from '../src'
 
 describe('Mapper', () => {
   it('maps input to streams', done => {
@@ -61,7 +61,7 @@ describe('Mapper', () => {
           .on('error', error => {
             reject(new Error(error + ':' + data))
           })
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           })
       }),
@@ -91,14 +91,14 @@ describe('Mapper', () => {
       return stream
     })
     expect(
-      new Promise((resolve, reject) => {
+      new BluebirdPromise((resolve, reject) => {
         let data = ''
         mapper
           .on('end', () => resolve(data))
           .on('error', error => {
             reject(new Error(error + ':' + data))
           })
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           })
       }),
@@ -129,14 +129,14 @@ describe('Mapper', () => {
       return stream
     })
     expect(
-      new Promise((resolve, reject) => {
+      new BluebirdPromise((resolve, reject) => {
         let data = ''
         mapper
           .on('end', () => resolve(data))
           .on('error', error => {
             reject(new Error(error + ':' + data))
           })
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           })
       }),
@@ -164,14 +164,14 @@ describe('Mapper', () => {
       return stream
     })
     expect(
-      new Promise((resolve, reject) => {
+      new BluebirdPromise((resolve, reject) => {
         let data = ''
         mapper
           .on('end', () => resolve(data))
           .on('error', error => {
             reject(new Error(error + ':' + data))
           })
-          .on('data', chunk => {
+          .on('data', (chunk: any) => {
             data += chunk
           })
       }),
@@ -201,7 +201,7 @@ describe('Mapper', () => {
       { abortOnError: true },
     )
     expect(
-      new Promise((resolve, reject) => {
+      new BluebirdPromise((resolve, reject) => {
         let data = ''
         mapper
           .on('end', () => resolve(data))
@@ -238,7 +238,7 @@ describe('Mapper', () => {
       { abortOnError: true },
     )
     expect(
-      new Promise((resolve, reject) => {
+      new BluebirdPromise((resolve, reject) => {
         let data = ''
         mapper
           .on('end', () => resolve(data))
@@ -269,10 +269,8 @@ describe('Mapper', () => {
       { abortOnError: true },
     )
     expect(
-      new Promise((resolve, reject) => {
-        mapper
-          .on('end', resolve)
-          .on('error', reject)
+      new BluebirdPromise((resolve, reject) => {
+        mapper.on('end', resolve).on('error', reject)
       }),
     )
       .rejects.toThrow('emulated error')
@@ -283,5 +281,4 @@ describe('Mapper', () => {
     input.write('b')
     input.end()
   })
-
 })
