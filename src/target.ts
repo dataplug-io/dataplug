@@ -49,12 +49,7 @@ export class Target {
    * @param params Parameters
    * @returns Input object stream(s) chain
    */
-  async createInput(
-    params: Object,
-  ): Promise<
-    | NodeJS.WritableStream
-    | Array<NodeJS.WritableStream | PromiseLike<NodeJS.WritableStream>>
-  > {
+  async createInput(params: Object): Promise<TargetStream> {
     check.assert.object(params)
 
     if (!this._inputFactory) {

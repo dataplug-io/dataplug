@@ -5,13 +5,15 @@ import { last, first, forEach, flatten, isFunction } from 'lodash'
 import { Promise as BluebirdPromise } from 'bluebird'
 import * as logger from 'winston'
 import { Stream, isWritableStream, isReadableStream } from './stream'
+import { SourceStream } from './source'
+import { TargetStream } from './target'
 
-export interface ReplicationChain<T = Stream>
+export interface ReplicationChain<T = Stream | SourceStream | TargetStream>
   extends Array<
     T | PromiseLike<T> | ReplicationChain<T> | PromiseLike<ReplicationChain<T>>
   > {}
 
-export type ReplicationChainElement<T = Stream> =
+export type ReplicationChainElement<T = Stream | SourceStream | TargetStream> =
   | T
   | PromiseLike<T>
   | ReplicationChain<T>

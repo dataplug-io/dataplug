@@ -49,12 +49,7 @@ export class Source {
    * @param params Parameters
    * @return Output object stream(s) chain
    */
-  async createOutput(
-    params: Object,
-  ): Promise<
-    | NodeJS.ReadableStream
-    | Array<NodeJS.ReadableStream | PromiseLike<NodeJS.ReadableStream>>
-  > {
+  async createOutput(params: Object): Promise<SourceStream> {
     params = cloneDeep(params)
     const validator = new Ajv({
       allErrors: true,
